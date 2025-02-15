@@ -17,11 +17,27 @@ import {
   InstagramLogoIcon,
   LinkedInLogoIcon,
 } from '@radix-ui/react-icons';
+import { gql, useMutation } from '@apollo/client';
+import { usePrivy } from '@privy-io/react-auth';
+import { userIdAtom } from '@/components/LoginButton';
+import { useAtom } from 'jotai';
+
+// Update the mutation definition to remove isPublished
+const INSERT_CHARACTER = gql`
+  mutation InsertCharacter($character: jsonb!, $userId: uuid!) {
+    insert_characters_one(object: { character: $character, userId: $userId }) {
+      id
+    }
+  }
+`;
 
 export default function AgentsPage() {
+  const [userId] = useAtom(userIdAtom);
   const [activeFilter, setActiveFilter] = useState('all');
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [showDeployModal, setShowDeployModal] = useState(false);
+  const [characterJson, setCharacterJson] = useState<any>(null);
+  const [insertCharacter] = useMutation(INSERT_CHARACTER);
 
   // Mock data for agents
   const agents = [
@@ -84,6 +100,43 @@ export default function AgentsPage() {
       useCase: 'engagement',
     },
   ];
+
+  const handleSaveCharacter = async () => {
+    if (!characterJson || !userId) {
+      console.error('Missing character JSON or user ID');
+      return;
+    }
+
+    try {
+      const { data } = await insertCharacter({
+        variables: {
+          character: characterJson,
+          userId: userId,
+        },
+      });
+      console.log('Character saved:', data);
+      setShowDeployModal(false);
+    } catch (error) {
+      console.error('Error saving character:', error);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = event => {
+        try {
+          const json = JSON.parse(event.target?.result as string);
+          setCharacterJson(json);
+          console.log('Parsed JSON:', json);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -229,21 +282,7 @@ export default function AgentsPage() {
                       <input
                         type="file"
                         accept="application/json"
-                        onChange={e => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = event => {
-                              try {
-                                const json = JSON.parse(event.target?.result as string);
-                                console.log('Parsed JSON:', json);
-                              } catch (error) {
-                                console.error('Error parsing JSON:', error);
-                              }
-                            };
-                            reader.readAsText(file);
-                          }
-                        }}
+                        onChange={handleFileChange}
                         className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent/20 file:text-accent hover:file:bg-accent/30 file:cursor-pointer"
                       />
                       <p className="text-white/50 text-sm mt-2">
@@ -257,7 +296,11 @@ export default function AgentsPage() {
                 <button onClick={() => setShowDeployModal(false)} className="button-secondary">
                   Cancel
                 </button>
-                <button className="button-primary flex items-center">
+                <button
+                  onClick={handleSaveCharacter}
+                  disabled={!characterJson || !userId}
+                  className="button-primary flex items-center"
+                >
                   <RocketLaunchIcon className="w-5 h-5 mr-2" />
                   Deploy Agent
                 </button>
