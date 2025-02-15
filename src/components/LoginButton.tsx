@@ -1,10 +1,12 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, useSolanaWallets } from '@privy-io/react-auth';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
 
 export function LoginButton() {
   const { ready, authenticated, user, login, logout } = usePrivy();
+  const { wallets } = useSolanaWallets();
+  console.log({ wallets });
 
   if (!ready) {
     return null;
