@@ -23,7 +23,7 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <ApolloProvider client={client}>
       <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_API_KEY || ''}
+        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
         config={{
           // Customize Privy's appearance in your app
           appearance: {
