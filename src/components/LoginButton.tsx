@@ -2,7 +2,6 @@
 
 import { usePrivy, useSolanaWallets } from '@privy-io/react-auth';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
-import { LogOut } from 'lucide-react';
 
 export function LoginButton() {
   const { ready, authenticated, login, logout } = usePrivy();
