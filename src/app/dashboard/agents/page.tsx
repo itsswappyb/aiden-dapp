@@ -221,30 +221,36 @@ export default function AgentsPage() {
             </div>
             <div className="p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-white mb-4">Choose a Template</h3>
-                <div className="space-y-4">
-                  {deploymentTemplates.map(template => (
-                    <div
-                      key={template.id}
-                      className="p-4 rounded-lg border border-white/10 hover:border-accent/50 cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="text-white font-medium">{template.name}</h4>
-                          <p className="text-white/50 text-sm mt-1">{template.description}</p>
-                        </div>
-                        <div className="flex space-x-2">
-                          {template.platforms.map(platform => {
-                            const PlatformIcon =
-                              platformFilters.find(f => f.id === platform)?.icon || GlobeAltIcon;
-                            return (
-                              <PlatformIcon key={platform} className="w-5 h-5 text-white/50" />
-                            );
-                          })}
-                        </div>
-                      </div>
+                <h3 className="text-lg font-medium text-white mb-4">Upload Character File</h3>
+                <div className="p-4 rounded-lg border border-white/10">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-white mb-2">Character JSON File</label>
+                      <input
+                        type="file"
+                        accept="application/json"
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = event => {
+                              try {
+                                const json = JSON.parse(event.target?.result as string);
+                                console.log('Parsed JSON:', json);
+                              } catch (error) {
+                                console.error('Error parsing JSON:', error);
+                              }
+                            };
+                            reader.readAsText(file);
+                          }
+                        }}
+                        className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent/20 file:text-accent hover:file:bg-accent/30 file:cursor-pointer"
+                      />
+                      <p className="text-white/50 text-sm mt-2">
+                        Upload a JSON file containing the agent's character configuration
+                      </p>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
               <div className="flex justify-end space-x-3">
