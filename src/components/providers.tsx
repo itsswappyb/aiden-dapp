@@ -3,14 +3,11 @@
 import { PrivyProvider } from '@privy-io/react-auth';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '@/lib/apollo-client';
-
 import { useEffect, useState } from 'react';
 
 interface ProvidersProps {
   children: React.ReactNode;
 }
-
-const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || '';
 
 export function Providers({ children }: ProvidersProps) {
   const [mounted, setMounted] = useState(false);
@@ -26,7 +23,7 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <ApolloProvider client={client}>
       <PrivyProvider
-        appId={PRIVY_APP_ID}
+        appId={process.env.NEXT_PUBLIC_PRIVY_API_KEY || ''}
         config={{
           // Customize Privy's appearance in your app
           appearance: {
