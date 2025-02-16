@@ -1,14 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, Title, Text, AreaChart, Metric, Badge } from "@tremor/react";
-import { motion } from "framer-motion";
-import {
-  CommandLineIcon,
-  BoltIcon,
-  ClockIcon,
-  SignalIcon,
-} from "@heroicons/react/24/outline";
+import { Card, Title, Text, AreaChart, Metric, Badge } from '@tremor/react';
+import { motion } from 'framer-motion';
+import { CommandLineIcon, BoltIcon, ClockIcon, SignalIcon } from '@heroicons/react/24/outline';
 
 interface AgentMetrics {
   responseTime: number[];
@@ -33,15 +28,7 @@ export default function AgentMonitor({ agentId, agentName, platform }: AgentMoni
     uptime: 99.9,
     status: 'online',
     messagesHandled: 1234,
-    timestamps: [
-      '12:00',
-      '12:10',
-      '12:20',
-      '12:30',
-      '12:40',
-      '12:50',
-      '13:00',
-    ],
+    timestamps: ['12:00', '12:10', '12:20', '12:30', '12:40', '12:50', '13:00'],
   });
 
   // Simulate real-time updates
@@ -60,8 +47,8 @@ export default function AgentMonitor({ agentId, agentName, platform }: AgentMoni
 
   const performanceData = metrics.timestamps.map((timestamp, index) => ({
     timestamp,
-    "Response Time (ms)": metrics.responseTime[index],
-    "Accuracy (%)": metrics.accuracy[index],
+    'Response Time (ms)': metrics.responseTime[index],
+    'Accuracy (%)': metrics.accuracy[index],
   }));
 
   return (
@@ -81,8 +68,8 @@ export default function AgentMonitor({ agentId, agentName, platform }: AgentMoni
             metrics.status === 'online'
               ? 'bg-green-400/10 text-green-400'
               : metrics.status === 'training'
-              ? 'bg-yellow-400/10 text-yellow-400'
-              : 'bg-red-400/10 text-red-400'
+                ? 'bg-yellow-400/10 text-yellow-400'
+                : 'bg-red-400/10 text-red-400'
           }`}
         >
           {metrics.status.toUpperCase()}
@@ -125,8 +112,8 @@ export default function AgentMonitor({ agentId, agentName, platform }: AgentMoni
           className="h-64"
           data={performanceData}
           index="timestamp"
-          categories={["Response Time (ms)", "Accuracy (%)"]}
-          colors={["cyan", "indigo"]}
+          categories={['Response Time (ms)', 'Accuracy (%)']}
+          colors={['cyan', 'indigo']}
           showAnimation={true}
           showLegend={true}
         />
@@ -176,4 +163,4 @@ export default function AgentMonitor({ agentId, agentName, platform }: AgentMoni
       </div>
     </div>
   );
-} 
+}

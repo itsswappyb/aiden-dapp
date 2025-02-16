@@ -1,13 +1,9 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Card, Title, Text } from "@tremor/react";
-import { motion } from "framer-motion";
-import {
-  UserCircleIcon,
-  PhotoIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/outline";
+import { Card, Title, Text } from '@tremor/react';
+import { motion } from 'framer-motion';
+import { UserCircleIcon, PhotoIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 interface AgentSettingsProps {
   agentId: string;
@@ -16,11 +12,11 @@ interface AgentSettingsProps {
   onUpdate: (data: { name: string; avatar?: File }) => void;
 }
 
-export default function AgentSettings({ 
-  agentId, 
-  initialName, 
+export default function AgentSettings({
+  agentId,
+  initialName,
   initialAvatar,
-  onUpdate 
+  onUpdate,
 }: AgentSettingsProps) {
   const [name, setName] = useState(initialName);
   const [avatar, setAvatar] = useState<string | undefined>(initialAvatar);
@@ -33,11 +29,11 @@ export default function AgentSettings({
       // Create preview URL for the UI
       const previewUrl = URL.createObjectURL(file);
       setAvatar(previewUrl);
-      
+
       // Trigger update
       onUpdate({ name, avatar: file });
       setIsUploading(true);
-      
+
       // Simulate upload completion
       setTimeout(() => {
         setIsUploading(false);
@@ -55,16 +51,12 @@ export default function AgentSettings({
         {/* Avatar Section */}
         <div className="flex items-center space-x-6">
           <div className="relative">
-            <div 
+            <div
               className="w-24 h-24 rounded-full bg-[#87fafd]/10 flex items-center justify-center overflow-hidden cursor-pointer group"
               onClick={() => fileInputRef.current?.click()}
             >
               {avatar ? (
-                <img 
-                  src={avatar} 
-                  alt={name} 
-                  className="w-full h-full object-cover"
-                />
+                <img src={avatar} alt={name} className="w-full h-full object-cover" />
               ) : (
                 <UserCircleIcon className="w-16 h-16 text-accent" />
               )}
@@ -104,14 +96,11 @@ export default function AgentSettings({
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               className="flex-1 bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none"
               placeholder="Enter agent name"
             />
-            <button
-              onClick={handleNameUpdate}
-              className="button-primary"
-            >
+            <button onClick={handleNameUpdate} className="button-primary">
               Update Name
             </button>
           </div>
@@ -168,4 +157,4 @@ export default function AgentSettings({
       </div>
     </Card>
   );
-} 
+}

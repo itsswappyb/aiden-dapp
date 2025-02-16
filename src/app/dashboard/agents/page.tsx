@@ -299,7 +299,7 @@ export default function AgentsPage() {
                         className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent/20 file:text-accent hover:file:bg-accent/30 file:cursor-pointer"
                       />
                       <p className="text-white/50 text-sm mt-2">
-                        Upload a JSON file containing the agent's character configuration
+                        Upload a JSON file containing the agent&apos;s character configuration
                       </p>
                     </div>
                   </div>

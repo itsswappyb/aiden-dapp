@@ -1,61 +1,61 @@
 'use client';
 
-import { Card, Title, Text, Tab, TabList, TabGroup, TabPanel, TabPanels } from "@tremor/react";
-import { motion } from "framer-motion";
+import { Card, Title, Text, Tab, TabList, TabGroup, TabPanel, TabPanels } from '@tremor/react';
+import { motion } from 'framer-motion';
 import {
   ChatBubbleLeftRightIcon,
   CommandLineIcon,
   UserGroupIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 
 const platforms = [
   {
-    name: "Telegram",
-    status: "Active",
+    name: 'Telegram',
+    status: 'Active',
     agents: 2,
-    messages: "1.2k",
-    engagement: "85%",
+    messages: '1.2k',
+    engagement: '85%',
   },
   {
-    name: "Discord",
-    status: "Active",
+    name: 'Discord',
+    status: 'Active',
     agents: 3,
-    messages: "3.5k",
-    engagement: "92%",
+    messages: '3.5k',
+    engagement: '92%',
   },
   {
-    name: "X (Twitter)",
-    status: "Inactive",
+    name: 'X (Twitter)',
+    status: 'Inactive',
     agents: 0,
-    messages: "0",
-    engagement: "0%",
+    messages: '0',
+    engagement: '0%',
   },
 ];
 
 const agents = [
   {
     id: 1,
-    name: "Community Manager",
-    platform: "Discord",
-    status: "Active",
-    uptime: "99.9%",
-    messages: "2.3k",
+    name: 'Community Manager',
+    platform: 'Discord',
+    status: 'Active',
+    uptime: '99.9%',
+    messages: '2.3k',
   },
   {
     id: 2,
-    name: "Support Agent",
-    platform: "Telegram",
-    status: "Active",
-    uptime: "98.5%",
-    messages: "856",
+    name: 'Support Agent',
+    platform: 'Telegram',
+    status: 'Active',
+    uptime: '98.5%',
+    messages: '856',
   },
   {
     id: 3,
-    name: "Content Moderator",
-    platform: "Discord",
-    status: "Active",
-    uptime: "99.7%",
-    messages: "1.1k",
+    name: 'Content Moderator',
+    platform: 'Discord',
+    status: 'Active',
+    uptime: '99.7%',
+    messages: '1.1k',
   },
 ];
 
@@ -135,14 +135,14 @@ export default function Dashboard() {
         <Title className="text-white mb-4">Platform Overview</Title>
         <TabGroup>
           <TabList className="border-b border-white/10">
-            {platforms.map((platform) => (
+            {platforms.map(platform => (
               <Tab key={platform.name} className="text-white/70 hover:text-accent">
                 {platform.name}
               </Tab>
             ))}
           </TabList>
           <TabPanels>
-            {platforms.map((platform) => (
+            {platforms.map(platform => (
               <TabPanel key={platform.name}>
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="glass-card p-4">
@@ -150,9 +150,7 @@ export default function Dashboard() {
                     <div className="flex items-center mt-1">
                       <div
                         className={`w-2 h-2 rounded-full mr-2 ${
-                          platform.status === "Active"
-                            ? "bg-green-400"
-                            : "bg-red-400"
+                          platform.status === 'Active' ? 'bg-green-400' : 'bg-red-400'
                         }`}
                       />
                       <span className="text-white">{platform.status}</span>
@@ -181,7 +179,7 @@ export default function Dashboard() {
       <Card className="glass-card">
         <Title className="text-white mb-4">Active Agents</Title>
         <div className="space-y-4">
-          {agents.map((agent) => (
+          {agents.map(agent => (
             <div
               key={agent.id}
               className="glass-card hover-accent p-4 flex items-center justify-between"
@@ -204,9 +202,9 @@ export default function Dashboard() {
                 </div>
                 <div
                   className={`px-3 py-1 rounded-full text-sm ${
-                    agent.status === "Active"
-                      ? "bg-green-400/10 text-green-400"
-                      : "bg-red-400/10 text-red-400"
+                    agent.status === 'Active'
+                      ? 'bg-green-400/10 text-green-400'
+                      : 'bg-red-400/10 text-red-400'
                   }`}
                 >
                   {agent.status}
@@ -218,4 +216,4 @@ export default function Dashboard() {
       </Card>
     </div>
   );
-} 
+}

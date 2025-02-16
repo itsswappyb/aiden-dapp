@@ -1,17 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, Title, Text, Badge, Tab, TabList, TabGroup, TabPanel, TabPanels } from "@tremor/react";
-import { motion } from "framer-motion";
+import {
+  Card,
+  Title,
+  Text,
+  Badge,
+  Tab,
+  TabList,
+  TabGroup,
+  TabPanel,
+  TabPanels,
+} from '@tremor/react';
+import { motion } from 'framer-motion';
 import {
   BeakerIcon,
   CommandLineIcon,
   PlayIcon,
   StopIcon,
   Cog6ToothIcon,
-} from "@heroicons/react/24/outline";
-import AgentTraining from "@/components/agents/AgentTraining";
-import AgentSettings from "@/components/agents/AgentSettings";
+} from '@heroicons/react/24/outline';
+import AgentTraining from '@/components/agents/AgentTraining';
+import AgentSettings from '@/components/agents/AgentSettings';
 
 interface TrainingAgent {
   id: string;
@@ -52,18 +62,14 @@ export default function TrainingCenter() {
   const [activeTab, setActiveTab] = useState<'training' | 'settings'>('training');
 
   const startTraining = (agentId: string) => {
-    setAgents(prev => 
-      prev.map(agent => 
-        agent.id === agentId ? { ...agent, status: 'in_progress' } : agent
-      )
+    setAgents(prev =>
+      prev.map(agent => (agent.id === agentId ? { ...agent, status: 'in_progress' } : agent))
     );
   };
 
   const stopTraining = (agentId: string) => {
-    setAgents(prev => 
-      prev.map(agent => 
-        agent.id === agentId ? { ...agent, status: 'completed' } : agent
-      )
+    setAgents(prev =>
+      prev.map(agent => (agent.id === agentId ? { ...agent, status: 'completed' } : agent))
     );
   };
 
@@ -92,7 +98,7 @@ export default function TrainingCenter() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card 
+            <Card
               className={`glass-card hover-accent cursor-pointer ${
                 selectedAgent?.id === agent.id ? 'border-accent' : ''
               }`}
@@ -102,8 +108,8 @@ export default function TrainingCenter() {
                 <div className="flex items-center">
                   <div className="w-12 h-12 rounded-full bg-[#87fafd]/10 flex items-center justify-center mr-4 overflow-hidden">
                     {agent.avatar ? (
-                      <img 
-                        src={agent.avatar} 
+                      <img
+                        src={agent.avatar}
                         alt={agent.name}
                         className="w-full h-full object-cover"
                       />
@@ -121,20 +127,21 @@ export default function TrainingCenter() {
                     agent.status === 'completed'
                       ? 'bg-green-400/10 text-green-400'
                       : agent.status === 'in_progress'
-                      ? 'bg-yellow-400/10 text-yellow-400'
-                      : 'bg-white/10 text-white/70'
+                        ? 'bg-yellow-400/10 text-yellow-400'
+                        : 'bg-white/10 text-white/70'
                   }`}
                 >
-                  {agent.status.split('_').map(word => 
-                    word.charAt(0).toUpperCase() + word.slice(1)
-                  ).join(' ')}
+                  {agent.status
+                    .split('_')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <Text className="text-white/70">Platform: {agent.platform}</Text>
                 {agent.status === 'not_started' && (
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       startTraining(agent.id);
                     }}
@@ -146,7 +153,7 @@ export default function TrainingCenter() {
                 )}
                 {agent.status === 'in_progress' && (
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       stopTraining(agent.id);
                     }}
@@ -170,14 +177,14 @@ export default function TrainingCenter() {
         >
           <TabGroup>
             <TabList className="border-b border-white/10">
-              <Tab 
+              <Tab
                 className="text-white/70 hover:text-accent"
                 onClick={() => setActiveTab('training')}
               >
                 <BeakerIcon className="w-5 h-5 mr-2 inline-block" />
                 Training Progress
               </Tab>
-              <Tab 
+              <Tab
                 className="text-white/70 hover:text-accent"
                 onClick={() => setActiveTab('settings')}
               >
@@ -201,7 +208,7 @@ export default function TrainingCenter() {
                     agentId={selectedAgent.id}
                     initialName={selectedAgent.name}
                     initialAvatar={selectedAgent.avatar}
-                    onUpdate={(data) => handleAgentUpdate(selectedAgent.id, data)}
+                    onUpdate={data => handleAgentUpdate(selectedAgent.id, data)}
                   />
                 </div>
               </TabPanel>
@@ -211,4 +218,4 @@ export default function TrainingCenter() {
       )}
     </div>
   );
-} 
+}
