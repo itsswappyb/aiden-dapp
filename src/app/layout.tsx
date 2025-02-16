@@ -6,7 +6,7 @@ import ClientLayout from '@/components/layout/ClientLayout';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Suitami - AI Agents for Web3 Communities',
+  title: 'Aiden - AI Agents for Web3 Communities',
   description: 'Deploy autonomous AI agents to manage and grow your Web3 community',
 };
 

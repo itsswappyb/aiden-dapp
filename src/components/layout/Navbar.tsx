@@ -11,9 +11,7 @@ const Navbar = () => {
     <nav className="glass-effect fixed w-full z-50 top-0 left-0 border-b border-white/5">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/" className="flex items-center space-x-3">
-          <span className="self-center text-2xl font-semibold text-gradient">
-            Suitami
-          </span>
+          <span className="self-center text-2xl font-semibold text-gradient">Aiden</span>
         </Link>
 
         <button
@@ -66,9 +64,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <button className="button-primary">
-                Connect Wallet
-              </button>
+              <button className="button-primary">Connect Wallet</button>
             </li>
           </ul>
         </div>
@@ -77,4 +73,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

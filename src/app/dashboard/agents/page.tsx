@@ -38,6 +38,8 @@ export default function AgentsPage() {
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [characterJson, setCharacterJson] = useState<any>(null);
   const [insertCharacter] = useMutation(INSERT_CHARACTER);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Mock data for agents
   const agents = [
@@ -103,9 +105,12 @@ export default function AgentsPage() {
 
   const handleSaveCharacter = async () => {
     if (!characterJson || !userId) {
-      console.error('Missing character JSON or user ID');
+      setError('Missing character JSON or user ID');
       return;
     }
+
+    setIsLoading(true);
+    setError(null);
 
     try {
       const { data } = await insertCharacter({
@@ -117,7 +122,10 @@ export default function AgentsPage() {
       console.log('Character saved:', data);
       setShowDeployModal(false);
     } catch (error) {
+      setError(error instanceof Error ? error.message : 'Error saving character');
       console.error('Error saving character:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -255,11 +263,11 @@ export default function AgentsPage() {
       </div>
 
       {showDeployModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto"
+            className="glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto relative"
           >
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
@@ -273,6 +281,11 @@ export default function AgentsPage() {
               </div>
             </div>
             <div className="p-6 space-y-6">
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500">
+                  {error}
+                </div>
+              )}
               <div>
                 <h3 className="text-lg font-medium text-white mb-4">Upload Character File</h3>
                 <div className="p-4 rounded-lg border border-white/10">
@@ -298,11 +311,39 @@ export default function AgentsPage() {
                 </button>
                 <button
                   onClick={handleSaveCharacter}
-                  disabled={!characterJson || !userId}
+                  disabled={!characterJson || !userId || isLoading}
                   className="button-primary flex items-center"
                 >
-                  <RocketLaunchIcon className="w-5 h-5 mr-2" />
-                  Deploy Agent
+                  {isLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Deploying...
+                    </>
+                  ) : (
+                    <>
+                      <RocketLaunchIcon className="w-5 h-5 mr-2" />
+                      Deploy Agent
+                    </>
+                  )}
                 </button>
               </div>
             </div>
