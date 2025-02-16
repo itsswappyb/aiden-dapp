@@ -6,15 +6,15 @@ interface LoadingIndicatorProps {
   className?: string;
 }
 
-export default function LoadingIndicator({ 
-  text, 
+export default function LoadingIndicator({
+  text,
   size = 'md',
-  className = ''
+  className = '',
 }: LoadingIndicatorProps) {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-6 h-6',
-    lg: 'w-8 h-8'
+    lg: 'w-8 h-8',
   };
 
   return (
@@ -27,4 +27,4 @@ export default function LoadingIndicator({
       {text && <span className="text-white/70">{text}</span>}
     </div>
   );
-} 
+}

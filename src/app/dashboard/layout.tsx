@@ -86,7 +86,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex flex-col h-full">
               <div className="flex items-center justify-between mb-8">
                 <Link href="/dashboard" className="text-gradient font-semibold text-xl">
-                  Suitami
+                  Aiden
                 </Link>
                 <button
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}

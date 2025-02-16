@@ -9,13 +9,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#011829] via-[#030f1c] to-black">
       <Navbar />
-      <main className="pt-16 min-h-screen">
-        {children}
-      </main>
+      <main className="pt-16 min-h-screen">{children}</main>
       <footer className="glass-effect border-t border-white/5 py-8">
         <div className="max-w-screen-xl mx-auto px-4">
           <div className="text-center text-white/70">
-            <p>© 2024 Suitami. All rights reserved.</p>
+            <p>© 2024 Aiden. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -23,4 +21,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default Layout; 
+export default Layout;

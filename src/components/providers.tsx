@@ -29,7 +29,7 @@ export function Providers({ children }: ProvidersProps) {
           appearance: {
             theme: 'dark',
             accentColor: '#87fafd',
-            logo: '/suitami-logo.png',
+            logo: '/Aiden-logo.png',
           },
           // Create embedded wallets for users who don't have a wallet
           embeddedWallets: {

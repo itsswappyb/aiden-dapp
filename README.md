@@ -1,10 +1,10 @@
-# Suitami dApp
+# Aiden dApp
 
 A modern decentralized application for managing autonomous AI agents for Web3 communities.
 
 ## Overview
 
-Suitami provides an intelligence layer that empowers Web3 communities with autonomous AI agents, trained to manage, engage, and grow your ecosystem. The platform enables seamless integration of AI agents across various platforms including Telegram, Discord, and X (Twitter).
+Aiden provides an intelligence layer that empowers Web3 communities with autonomous AI agents, trained to manage, engage, and grow your ecosystem. The platform enables seamless integration of AI agents across various platforms including Telegram, Discord, and X (Twitter).
 
 ## Technology Stack
 

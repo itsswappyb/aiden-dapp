@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ChangeEvent } from 'react';
-import { Card, Text } from "@tremor/react";
+import { Card, Text } from '@tremor/react';
 
 interface FormField {
   name: string;
@@ -74,7 +74,7 @@ export default function KnowledgeBaseForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       onSubmit(formState);
       setFormState(initialState);
@@ -107,7 +107,7 @@ export default function KnowledgeBaseForm({
     const commonProps = {
       id: field.name,
       value: formState[field.name],
-      onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => 
+      onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
         handleChange(field.name, e.target.value),
       onBlur: () => handleBlur(field.name),
       className: `w-full bg-black/20 border ${errors[field.name] ? 'border-red-500' : 'border-white/10'} 
@@ -122,27 +122,19 @@ export default function KnowledgeBaseForm({
 
     switch (field.type) {
       case 'textarea':
-        return (
-          <textarea 
-            {...commonProps} 
-            className={`${commonProps.className} h-32`}
-          />
-        );
+        return <textarea {...commonProps} className={`${commonProps.className} h-32`} />;
       case 'select':
         return (
           <select {...commonProps}>
             {field.options?.map(option => (
-              <option key={option} value={option}>{option}</option>
+              <option key={option} value={option}>
+                {option}
+              </option>
             ))}
           </select>
         );
       default:
-        return (
-          <input 
-            {...commonProps}
-            type={field.type}
-          />
-        );
+        return <input {...commonProps} type={field.type} />;
     }
   };
 
@@ -154,25 +146,18 @@ export default function KnowledgeBaseForm({
             <Text className="text-white/70 mb-2">{field.label}</Text>
             {renderField(field)}
             {errors[field.name] && touched[field.name] && (
-              <Text 
-                id={`${field.name}-error`}
-                className="text-red-500 text-sm mt-1"
-              >
+              <Text id={`${field.name}-error`} className="text-red-500 text-sm mt-1">
                 {errors[field.name]}
               </Text>
             )}
           </div>
         ))}
         <div className="flex justify-end">
-          <button
-            type="submit"
-            className="button-primary"
-            aria-label={submitLabel}
-          >
+          <button type="submit" className="button-primary" aria-label={submitLabel}>
             {submitLabel}
           </button>
         </div>
       </form>
     </Card>
   );
-} 
+}

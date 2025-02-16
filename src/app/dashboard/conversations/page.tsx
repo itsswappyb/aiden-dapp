@@ -1,8 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, Title, Text, Tab, TabList, TabGroup, TabPanel, TabPanels, Badge } from "@tremor/react";
-import { motion } from "framer-motion";
+import {
+  Card,
+  Title,
+  Text,
+  Tab,
+  TabList,
+  TabGroup,
+  TabPanel,
+  TabPanels,
+  Badge,
+} from '@tremor/react';
+import { motion } from 'framer-motion';
 import {
   ChatBubbleLeftRightIcon,
   CommandLineIcon,
@@ -10,7 +20,7 @@ import {
   ClockIcon,
   TagIcon,
   ChartBarIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 
 interface Message {
   id: string;
@@ -26,7 +36,7 @@ interface Message {
 const sampleMessages: Message[] = [
   {
     id: '1',
-    content: "How do I stake my tokens?",
+    content: 'How do I stake my tokens?',
     sender: 'user',
     timestamp: '2 mins ago',
     sentiment: 'neutral',
@@ -36,7 +46,8 @@ const sampleMessages: Message[] = [
   },
   {
     id: '2',
-    content: "I'll guide you through the staking process. First, make sure you have your tokens in a compatible wallet...",
+    content:
+      "I'll guide you through the staking process. First, make sure you have your tokens in a compatible wallet...",
     sender: 'agent',
     timestamp: '2 mins ago',
     sentiment: 'positive',
@@ -46,7 +57,7 @@ const sampleMessages: Message[] = [
   },
   {
     id: '3',
-    content: "When is the next community call?",
+    content: 'When is the next community call?',
     sender: 'user',
     timestamp: '5 mins ago',
     sentiment: 'neutral',
@@ -56,7 +67,8 @@ const sampleMessages: Message[] = [
   },
   {
     id: '4',
-    content: "Our next community call is scheduled for this Friday at 2 PM UTC. I'll share the agenda shortly.",
+    content:
+      "Our next community call is scheduled for this Friday at 2 PM UTC. I'll share the agenda shortly.",
     sender: 'agent',
     timestamp: '5 mins ago',
     sentiment: 'positive',
@@ -81,22 +93,26 @@ export default function ConversationsPage() {
           <p className="text-white/70 mt-1">Monitor and analyze community interactions</p>
         </div>
         <div className="flex space-x-4">
-          <select 
+          <select
             className="bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={e => setSelectedCategory(e.target.value)}
           >
-            {categories.map((category) => (
-              <option key={category} value={category}>{category}</option>
+            {categories.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
             ))}
           </select>
           <select
             className="bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent focus:ring-1 focus:ring-accent outline-none"
             value={selectedPlatform}
-            onChange={(e) => setSelectedPlatform(e.target.value)}
+            onChange={e => setSelectedPlatform(e.target.value)}
           >
-            {platforms.map((platform) => (
-              <option key={platform} value={platform}>{platform}</option>
+            {platforms.map(platform => (
+              <option key={platform} value={platform}>
+                {platform}
+              </option>
             ))}
           </select>
         </div>
@@ -105,31 +121,31 @@ export default function ConversationsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           {
-            title: "Active Conversations",
-            value: "24",
+            title: 'Active Conversations',
+            value: '24',
             icon: ChatBubbleLeftRightIcon,
-            change: "+3",
+            change: '+3',
             positive: true,
           },
           {
-            title: "Response Time",
-            value: "45s",
+            title: 'Response Time',
+            value: '45s',
             icon: ClockIcon,
-            change: "-5s",
+            change: '-5s',
             positive: true,
           },
           {
-            title: "Sentiment Score",
-            value: "8.5",
+            title: 'Sentiment Score',
+            value: '8.5',
             icon: FaceSmileIcon,
-            change: "+0.3",
+            change: '+0.3',
             positive: true,
           },
           {
-            title: "Resolution Rate",
-            value: "94%",
+            title: 'Resolution Rate',
+            value: '94%',
             icon: TagIcon,
-            change: "+2%",
+            change: '+2%',
             positive: true,
           },
         ].map((stat, index) => (
@@ -152,9 +168,7 @@ export default function ConversationsPage() {
                 </div>
                 <div
                   className={`px-2 py-1 rounded-full text-xs ${
-                    stat.positive
-                      ? "bg-green-400/10 text-green-400"
-                      : "bg-red-400/10 text-red-400"
+                    stat.positive ? 'bg-green-400/10 text-green-400' : 'bg-red-400/10 text-red-400'
                   }`}
                 >
                   {stat.change}
@@ -178,11 +192,11 @@ export default function ConversationsPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
-                  <div className={`w-8 h-8 rounded-lg ${
-                    message.sender === 'agent' 
-                      ? 'bg-[#87fafd]/10' 
-                      : 'bg-white/10'
-                  } flex items-center justify-center`}>
+                  <div
+                    className={`w-8 h-8 rounded-lg ${
+                      message.sender === 'agent' ? 'bg-[#87fafd]/10' : 'bg-white/10'
+                    } flex items-center justify-center`}
+                  >
                     {message.sender === 'agent' ? (
                       <CommandLineIcon className="w-4 h-4 text-accent" />
                     ) : (
@@ -194,12 +208,8 @@ export default function ConversationsPage() {
                       <Text className="text-white font-medium">
                         {message.sender === 'agent' ? message.agentName : 'User'}
                       </Text>
-                      <Badge className="bg-[#87fafd]/10 text-accent">
-                        {message.platform}
-                      </Badge>
-                      <Badge className="bg-white/5 text-white/70">
-                        {message.category}
-                      </Badge>
+                      <Badge className="bg-[#87fafd]/10 text-accent">{message.platform}</Badge>
+                      <Badge className="bg-white/5 text-white/70">{message.category}</Badge>
                     </div>
                     <Text className="text-white/70 mt-1">{message.content}</Text>
                   </div>
@@ -224,9 +234,7 @@ export default function ConversationsPage() {
                 className="glass-card p-4 hover-accent cursor-pointer"
               >
                 <Text className="text-white font-medium">{template}</Text>
-                <Text className="text-white/70 text-sm mt-1">
-                  Click to view and edit template
-                </Text>
+                <Text className="text-white/70 text-sm mt-1">Click to view and edit template</Text>
               </motion.div>
             ))}
           </div>
@@ -257,4 +265,4 @@ export default function ConversationsPage() {
       </div>
     </div>
   );
-} 
+}

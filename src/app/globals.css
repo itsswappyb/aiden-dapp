@@ -15,7 +15,7 @@
   html {
     @apply bg-[#000000];
   }
-  
+
   body {
     @apply bg-gradient-to-b from-[#011829] via-[#030f1c] to-black min-h-screen text-white;
     background-attachment: fixed;
@@ -30,7 +30,7 @@
   .glass-card {
     @apply bg-black/20 backdrop-blur-lg border border-white/10 rounded-xl;
   }
-  
+
   .glass-effect {
     @apply bg-black/20 backdrop-blur-lg;
   }
@@ -94,11 +94,12 @@
   @apply text-white/70 hover:text-accent !important;
 }
 
-.tremor-Tab-root[data-headlessui-state="selected"] {
+.tremor-Tab-root[data-headlessui-state='selected'] {
   @apply text-accent border-accent !important;
 }
 
-.tremor-AreaChart-root, .tremor-BarChart-root {
+.tremor-AreaChart-root,
+.tremor-BarChart-root {
   @apply text-white/70 !important;
 }
 
@@ -106,6 +107,7 @@
   @apply text-white/70 !important;
 }
 
-.tremor-Title-root, .tremor-Text-root {
+.tremor-Title-root,
+.tremor-Text-root {
   @apply text-white/90 !important;
 }

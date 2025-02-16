@@ -1,6 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-import Layout from "@/components/layout/Layout";
+import Image from 'next/image';
+import Link from 'next/link';
+import Layout from '@/components/layout/Layout';
 
 export default function Home() {
   return (
@@ -15,12 +15,10 @@ export default function Home() {
                 Empower Your Web3 Community with AI
               </h1>
               <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                Deploy autonomous AI agents to manage, engage, and grow your community across multiple platforms
+                Deploy autonomous AI agents to manage, engage, and grow your community across
+                multiple platforms
               </p>
-              <Link 
-                href="/dashboard"
-                className="button-primary"
-              >
+              <Link href="/dashboard" className="button-primary">
                 Launch Dashboard
               </Link>
             </div>
@@ -36,36 +34,70 @@ export default function Home() {
               <div className="glass-card hover-accent p-6">
                 <div className="mb-4">
                   <div className="w-12 h-12 bg-[#87fafd]/10 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <svg
+                      className="w-6 h-6 text-accent"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
                     </svg>
                   </div>
                 </div>
                 <h3 className="text-xl font-semibold mb-2 text-white">Autonomous Agents</h3>
                 <p className="text-white/70">
-                  AI-powered agents that automatically manage your community, moderate content, and engage with members
+                  AI-powered agents that automatically manage your community, moderate content, and
+                  engage with members
                 </p>
               </div>
 
               <div className="glass-card hover-accent p-6">
                 <div className="mb-4">
                   <div className="w-12 h-12 bg-[#87fafd]/10 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                    <svg
+                      className="w-6 h-6 text-accent"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+                      />
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-white">Multi-platform Integration</h3>
+                <h3 className="text-xl font-semibold mb-2 text-white">
+                  Multi-platform Integration
+                </h3>
                 <p className="text-white/70">
-                  Seamlessly integrate with Discord, Telegram, and X to manage your community across platforms
+                  Seamlessly integrate with Discord, Telegram, and X to manage your community across
+                  platforms
                 </p>
               </div>
 
               <div className="glass-card hover-accent p-6">
                 <div className="mb-4">
                   <div className="w-12 h-12 bg-[#87fafd]/10 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    <svg
+                      className="w-6 h-6 text-accent"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
                     </svg>
                   </div>
                 </div>

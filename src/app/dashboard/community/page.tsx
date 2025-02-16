@@ -1,32 +1,32 @@
 'use client';
 
-import { Card, Title, Text, AreaChart, BarChart, DonutChart } from "@tremor/react";
-import { motion } from "framer-motion";
+import { Card, Title, Text, AreaChart, BarChart, DonutChart } from '@tremor/react';
+import { motion } from 'framer-motion';
 import {
   UserGroupIcon,
   ChatBubbleLeftRightIcon,
   ChartBarIcon,
   HeartIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 
 const memberGrowthData = [
-  { date: "Jan 1", "Total Members": 1420, "Active Members": 820 },
-  { date: "Jan 8", "Total Members": 1620, "Active Members": 920 },
-  { date: "Jan 15", "Total Members": 1870, "Active Members": 1100 },
-  { date: "Jan 22", "Total Members": 2140, "Active Members": 1300 },
-  { date: "Jan 29", "Total Members": 2300, "Active Members": 1580 },
+  { date: 'Jan 1', 'Total Members': 1420, 'Active Members': 820 },
+  { date: 'Jan 8', 'Total Members': 1620, 'Active Members': 920 },
+  { date: 'Jan 15', 'Total Members': 1870, 'Active Members': 1100 },
+  { date: 'Jan 22', 'Total Members': 2140, 'Active Members': 1300 },
+  { date: 'Jan 29', 'Total Members': 2300, 'Active Members': 1580 },
 ];
 
 const engagementData = [
-  { platform: "Discord", messages: 3500, activeUsers: 850, engagement: 75 },
-  { platform: "Telegram", messages: 2800, activeUsers: 620, engagement: 68 },
-  { platform: "X (Twitter)", messages: 1200, activeUsers: 450, engagement: 45 },
+  { platform: 'Discord', messages: 3500, activeUsers: 850, engagement: 75 },
+  { platform: 'Telegram', messages: 2800, activeUsers: 620, engagement: 68 },
+  { platform: 'X (Twitter)', messages: 1200, activeUsers: 450, engagement: 45 },
 ];
 
 const sentimentData = [
-  { name: "Positive", value: 65 },
-  { name: "Neutral", value: 25 },
-  { name: "Negative", value: 10 },
+  { name: 'Positive', value: 65 },
+  { name: 'Neutral', value: 25 },
+  { name: 'Negative', value: 10 },
 ];
 
 export default function CommunityPage() {
@@ -43,31 +43,31 @@ export default function CommunityPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           {
-            title: "Total Members",
-            value: "2.3k",
+            title: 'Total Members',
+            value: '2.3k',
             icon: UserGroupIcon,
-            change: "+12%",
+            change: '+12%',
             positive: true,
           },
           {
-            title: "Active Members",
-            value: "1.5k",
+            title: 'Active Members',
+            value: '1.5k',
             icon: HeartIcon,
-            change: "+8%",
+            change: '+8%',
             positive: true,
           },
           {
-            title: "Messages (24h)",
-            value: "7.5k",
+            title: 'Messages (24h)',
+            value: '7.5k',
             icon: ChatBubbleLeftRightIcon,
-            change: "+15%",
+            change: '+15%',
             positive: true,
           },
           {
-            title: "Engagement Rate",
-            value: "68%",
+            title: 'Engagement Rate',
+            value: '68%',
             icon: ChartBarIcon,
-            change: "-3%",
+            change: '-3%',
             positive: false,
           },
         ].map((stat, index) => (
@@ -90,9 +90,7 @@ export default function CommunityPage() {
                 </div>
                 <div
                   className={`px-2 py-1 rounded-full text-xs ${
-                    stat.positive
-                      ? "bg-green-400/10 text-green-400"
-                      : "bg-red-400/10 text-red-400"
+                    stat.positive ? 'bg-green-400/10 text-green-400' : 'bg-red-400/10 text-red-400'
                   }`}
                 >
                   {stat.change}
@@ -110,9 +108,9 @@ export default function CommunityPage() {
           className="h-72 mt-4"
           data={memberGrowthData}
           index="date"
-          categories={["Total Members", "Active Members"]}
-          colors={["cyan", "indigo"]}
-          valueFormatter={(number) => Intl.NumberFormat("us").format(number).toString()}
+          categories={['Total Members', 'Active Members']}
+          colors={['cyan', 'indigo']}
+          valueFormatter={number => Intl.NumberFormat('us').format(number).toString()}
           showAnimation={true}
         />
       </Card>
@@ -125,9 +123,9 @@ export default function CommunityPage() {
             className="h-72 mt-4"
             data={engagementData}
             index="platform"
-            categories={["messages", "activeUsers"]}
-            colors={["cyan", "indigo"]}
-            valueFormatter={(number) => Intl.NumberFormat("us").format(number).toString()}
+            categories={['messages', 'activeUsers']}
+            colors={['cyan', 'indigo']}
+            valueFormatter={number => Intl.NumberFormat('us').format(number).toString()}
             showAnimation={true}
           />
         </Card>
@@ -139,8 +137,8 @@ export default function CommunityPage() {
             data={sentimentData}
             category="value"
             index="name"
-            colors={["emerald", "amber", "rose"]}
-            valueFormatter={(number) => `${number}%`}
+            colors={['emerald', 'amber', 'rose']}
+            valueFormatter={number => `${number}%`}
             showAnimation={true}
           />
         </Card>
@@ -150,7 +148,7 @@ export default function CommunityPage() {
       <Card className="glass-card">
         <Title className="text-white mb-4">Platform Engagement Details</Title>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {engagementData.map((platform) => (
+          {engagementData.map(platform => (
             <div key={platform.platform} className="glass-card p-6">
               <div className="flex items-center justify-between mb-4">
                 <Text className="text-white font-medium">{platform.platform}</Text>
@@ -174,4 +172,4 @@ export default function CommunityPage() {
       </Card>
     </div>
   );
-} 
+}
