@@ -14,7 +14,7 @@ import {
   BeakerIcon,
 } from '@heroicons/react/24/outline';
 import { Providers } from '@/components/providers';
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, useSolanaWallets } from '@privy-io/react-auth';
 import { LoginButton } from '@/components/LoginButton';
 
 const navigation = [
@@ -30,19 +30,10 @@ const navigation = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   const { ready, authenticated, user, login, logout } = usePrivy();
-
-  const handleLogin = () => {
-    if (ready && !authenticated) {
-      login();
-    }
-  };
-
-  const handleLogout = () => {
-    if (ready && authenticated) {
-      logout();
-    }
-  };
+  const { wallets } = useSolanaWallets();
+  console.log({ wallets });
 
   // const renderWalletSection = () => {
   //   if (!ready) {

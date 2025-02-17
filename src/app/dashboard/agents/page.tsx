@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   PlusIcon,
-  FunnelIcon,
   ChatBubbleLeftRightIcon,
   UserGroupIcon,
   RocketLaunchIcon,
@@ -18,15 +17,15 @@ import {
   LinkedInLogoIcon,
 } from '@radix-ui/react-icons';
 import { gql, useMutation } from '@apollo/client';
-import { usePrivy } from '@privy-io/react-auth';
 import { userIdAtom } from '@/components/LoginButton';
 import { useAtom } from 'jotai';
 
 // Update the mutation definition to remove isPublished
 const INSERT_CHARACTER = gql`
-  mutation InsertCharacter($character: jsonb!, $userId: uuid!) {
-    insert_characters_one(object: { character: $character, userId: $userId }) {
+  mutation InsertCharacter($character: jsonb!, $userId: uuid!, $agentId: uuid) {
+    insert_characters_one(object: { character: $character, userId: $userId, agentId: $agentId }) {
       id
+      agentId
     }
   }
 `;
@@ -45,6 +44,9 @@ export default function AgentsPage() {
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [characterJson, setCharacterJson] = useState<any>(null);
+  const [isDeploying, setIsDeploying] = useState(false);
+
+  // Add both mutation hooks
   const [insertCharacter] = useMutation(INSERT_CHARACTER);
   const [startAgent, { loading: startAgentLoading, error: startAgentError, data: startAgentData }] =
     useMutation(START_AGENT);
@@ -113,6 +115,7 @@ export default function AgentsPage() {
     },
   ];
 
+  // Update the handleSaveCharacter function to use id instead of agentId
   const handleSaveCharacter = async () => {
     if (!characterJson || !userId) {
       setError('Missing character JSON or user ID');
@@ -123,15 +126,26 @@ export default function AgentsPage() {
     setError(null);
 
     try {
-      const { data } = await insertCharacter({
+      // First save the character
+      const { data: characterData } = await insertCharacter({
         variables: {
           character: characterJson,
           userId: userId,
+          agentId: null,
         },
       });
-      console.log('Character saved:', data);
+      console.log('Character saved:', characterData);
+
+      // Then start the agent with the character ID
+      const { data: agentData } = await startAgent({
+        variables: {
+          id: characterData.insert_characters_one.id,
+        },
+      });
+      console.log('Agent started:', agentData?.update_characters_by_pk);
+
       setShowDeployModal(false);
-      return data;
+      return agentData;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error saving character');
       console.error('Error saving character:', error);
