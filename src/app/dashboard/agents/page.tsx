@@ -19,6 +19,8 @@ import {
 import { gql, useMutation } from '@apollo/client';
 import { userIdAtom } from '@/components/LoginButton';
 import { useAtom } from 'jotai';
+import { useToast } from '@/components/ui/ToastContext';
+import { usePrivy } from '@privy-io/react-auth';
 
 // Update the mutation definition to remove isPublished
 const INSERT_CHARACTER = gql`
@@ -40,6 +42,8 @@ const START_AGENT = gql`
 
 export default function AgentsPage() {
   const [userId] = useAtom(userIdAtom);
+  const { showToast } = useToast();
+  const { authenticated } = usePrivy();
   const [activeFilter, setActiveFilter] = useState('all');
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [showDeployModal, setShowDeployModal] = useState(false);
@@ -139,10 +143,10 @@ export default function AgentsPage() {
       // Then start the agent with the character ID
       const { data: agentData } = await startAgent({
         variables: {
-          id: characterData.insert_characters_one.id,
+          characterId: characterData.insert_characters_one.id,
         },
       });
-      console.log('Agent started:', agentData?.update_characters_by_pk);
+      console.log('Agent started:', agentData?.startAgent);
 
       setShowDeployModal(false);
       return agentData;
@@ -194,7 +198,13 @@ export default function AgentsPage() {
           <p className="text-white/70 mt-2">Manage and monitor your AI agents</p>
         </div>
         <button
-          onClick={() => setShowDeployModal(true)}
+          onClick={() => {
+            if (!authenticated) {
+              showToast('Please connect your wallet first', 'warning');
+              return;
+            }
+            setShowDeployModal(true);
+          }}
           className="button-primary flex items-center"
         >
           <PlusIcon className="w-5 h-5 mr-2" />
