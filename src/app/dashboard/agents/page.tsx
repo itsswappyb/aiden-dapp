@@ -31,6 +31,14 @@ const INSERT_CHARACTER = gql`
   }
 `;
 
+const START_AGENT = gql`
+  mutation StartAgent($characterId: String!) {
+    startAgent(input: { characterId: $characterId }) {
+      id
+    }
+  }
+`;
+
 export default function AgentsPage() {
   const [userId] = useAtom(userIdAtom);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -38,6 +46,8 @@ export default function AgentsPage() {
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [characterJson, setCharacterJson] = useState<any>(null);
   const [insertCharacter] = useMutation(INSERT_CHARACTER);
+  const [startAgent, { loading: startAgentLoading, error: startAgentError, data: startAgentData }] =
+    useMutation(START_AGENT);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -121,11 +131,27 @@ export default function AgentsPage() {
       });
       console.log('Character saved:', data);
       setShowDeployModal(false);
+      return data;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error saving character');
       console.error('Error saving character:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleStartAgent = async (characterId: string) => {
+    try {
+      const response = await startAgent({
+        variables: {
+          characterId,
+        },
+      });
+      // Handle success
+      console.log('Agent started:', response.data.startAgent);
+    } catch (error) {
+      // Handle error
+      console.error('Error starting agent:', error);
     }
   };
 
@@ -310,7 +336,15 @@ export default function AgentsPage() {
                   Cancel
                 </button>
                 <button
-                  onClick={handleSaveCharacter}
+                  onClick={async function () {
+                    const data = await handleSaveCharacter();
+                    const characterId = data?.insert_characters_one.id;
+                    console.log('characterId in deploy button', characterId);
+                    if (data) {
+                      const startAgentResponse = await handleStartAgent(characterId);
+                      console.log('startAgentResponse in deploy button', startAgentResponse);
+                    }
+                  }}
                   disabled={!characterJson || !userId || isLoading}
                   className="button-primary flex items-center"
                 >
