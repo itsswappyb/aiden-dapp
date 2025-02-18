@@ -364,10 +364,10 @@ export default function AgentsPage() {
                     const data = await handleSaveCharacter();
                     const characterId = data?.insert_characters_one.id;
                     console.log('characterId in deploy button', characterId);
-                    if (data) {
-                      const startAgentResponse = await handleStartAgent(characterId);
-                      console.log('startAgentResponse in deploy button', startAgentResponse);
-                    }
+                    // if (data) {
+                    //   const startAgentResponse = await handleStartAgent(characterId);
+                    //   console.log('startAgentResponse in deploy button', startAgentResponse);
+                    // }
                   }}
                   disabled={!characterJson || !userId || isLoading}
                   className="button-primary flex items-center"
