@@ -4,6 +4,7 @@ import { PrivyProvider } from '@privy-io/react-auth';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '@/lib/apollo-client';
 import { NotificationProvider } from '@/contexts/NotificationContext';
+import { ToastProvider } from '@/components/ui/ToastContext';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -30,7 +31,9 @@ export function Providers({ children }: ProvidersProps) {
       }}
     >
       <ApolloProvider client={client}>
-        <NotificationProvider>{children}</NotificationProvider>
+        <NotificationProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </NotificationProvider>
       </ApolloProvider>
     </PrivyProvider>
   );
