@@ -21,28 +21,23 @@ export function Providers({ children }: ProvidersProps) {
   }
 
   return (
-    <ApolloProvider client={client}>
-      <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
-        config={{
-          // Customize Privy's appearance in your app
-          appearance: {
-            theme: 'dark',
-            accentColor: '#87fafd',
-            logo: '/Aiden-logo.png',
-          },
-          // Create embedded wallets for users who don't have a wallet
-          embeddedWallets: {
-            // createOnLogin: 'users-without-wallets',
-            solana: {
-              createOnLogin: 'users-without-wallets', // defaults to 'off'
-            },
-          },
-          loginMethods: ['email', 'wallet'],
-        }}
-      >
-        {children}
-      </PrivyProvider>
-    </ApolloProvider>
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
+      config={{
+        appearance: {
+          theme: 'dark',
+          accentColor: '#87fafd',
+          logo: '/Aiden-logo.png',
+        },
+        // embeddedWallets: {
+        //   solana: {
+        //     createOnLogin: 'users-without-wallets',
+        //   },
+        // },
+        // loginMethods: ['email', 'wallet'],
+      }}
+    >
+      <ApolloProvider client={client}>{children}</ApolloProvider>
+    </PrivyProvider>
   );
 }
