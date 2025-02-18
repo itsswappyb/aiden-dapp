@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import ClientLayout from '@/components/layout/ClientLayout';
+import { Providers } from '@/components/providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body
         className={`${inter.className} dark h-full bg-gradient-to-b from-[#011829] via-[#030f1c] to-black text-white antialiased`}
       >
-        <ClientLayout>{children}</ClientLayout>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -3,46 +3,38 @@
 import { PrivyProvider } from '@privy-io/react-auth';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '@/lib/apollo-client';
-import { useEffect, useState } from 'react';
+import { NotificationProvider } from '@/contexts/NotificationContext';
+import { ToastProvider } from '@/components/ui/ToastContext';
 
 interface ProvidersProps {
   children: React.ReactNode;
 }
 
 export function Providers({ children }: ProvidersProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
-    <ApolloProvider client={client}>
-      <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
-        config={{
-          // Customize Privy's appearance in your app
-          appearance: {
-            theme: 'dark',
-            accentColor: '#87fafd',
-            logo: '/Aiden-logo.png',
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
+      config={{
+        appearance: {
+          theme: 'dark',
+          accentColor: '#87fafd',
+          logo: '/Aiden-logo.png',
+        },
+        embeddedWallets: {
+          solana: {
+            createOnLogin: 'all-users',
           },
-          // Create embedded wallets for users who don't have a wallet
-          embeddedWallets: {
-            // createOnLogin: 'users-without-wallets',
-            solana: {
-              createOnLogin: 'users-without-wallets', // defaults to 'off'
-            },
+          ethereum: {
+            createOnLogin: 'all-users', // defaults to 'off'
           },
-          loginMethods: ['email', 'wallet'],
-        }}
-      >
-        {children}
-      </PrivyProvider>
-    </ApolloProvider>
+        },
+      }}
+    >
+      <ApolloProvider client={client}>
+        <NotificationProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </NotificationProvider>
+      </ApolloProvider>
+    </PrivyProvider>
   );
 }

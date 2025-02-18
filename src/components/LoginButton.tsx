@@ -53,6 +53,7 @@ export function LoginButton() {
       const { data: existingUser } = await refetchUser({
         wallet_address: walletAddress,
       });
+      console.log({ existingUser });
 
       if (existingUser.users.length > 0) {
         // User exists, set their ID

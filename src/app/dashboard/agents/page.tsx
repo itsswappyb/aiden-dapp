@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   PlusIcon,
-  FunnelIcon,
   ChatBubbleLeftRightIcon,
   UserGroupIcon,
   RocketLaunchIcon,
@@ -18,14 +17,24 @@ import {
   LinkedInLogoIcon,
 } from '@radix-ui/react-icons';
 import { gql, useMutation } from '@apollo/client';
-import { usePrivy } from '@privy-io/react-auth';
 import { userIdAtom } from '@/components/LoginButton';
 import { useAtom } from 'jotai';
+import { useToast } from '@/components/ui/ToastContext';
+import { usePrivy } from '@privy-io/react-auth';
 
 // Update the mutation definition to remove isPublished
 const INSERT_CHARACTER = gql`
-  mutation InsertCharacter($character: jsonb!, $userId: uuid!) {
-    insert_characters_one(object: { character: $character, userId: $userId }) {
+  mutation InsertCharacter($character: jsonb!, $userId: uuid!, $agentId: uuid) {
+    insert_characters_one(object: { character: $character, userId: $userId, agentId: $agentId }) {
+      id
+      agentId
+    }
+  }
+`;
+
+const START_AGENT = gql`
+  mutation StartAgent($characterId: String!) {
+    startAgent(input: { characterId: $characterId }) {
       id
     }
   }
@@ -33,11 +42,18 @@ const INSERT_CHARACTER = gql`
 
 export default function AgentsPage() {
   const [userId] = useAtom(userIdAtom);
+  const { showToast } = useToast();
+  const { authenticated } = usePrivy();
   const [activeFilter, setActiveFilter] = useState('all');
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [showDeployModal, setShowDeployModal] = useState(false);
   const [characterJson, setCharacterJson] = useState<any>(null);
+  const [isDeploying, setIsDeploying] = useState(false);
+
+  // Add both mutation hooks
   const [insertCharacter] = useMutation(INSERT_CHARACTER);
+  const [startAgent, { loading: startAgentLoading, error: startAgentError, data: startAgentData }] =
+    useMutation(START_AGENT);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -103,6 +119,7 @@ export default function AgentsPage() {
     },
   ];
 
+  // Update the handleSaveCharacter function to use id instead of agentId
   const handleSaveCharacter = async () => {
     if (!characterJson || !userId) {
       setError('Missing character JSON or user ID');
@@ -113,19 +130,46 @@ export default function AgentsPage() {
     setError(null);
 
     try {
-      const { data } = await insertCharacter({
+      // First save the character
+      const { data: characterData } = await insertCharacter({
         variables: {
           character: characterJson,
           userId: userId,
+          agentId: null,
         },
       });
-      console.log('Character saved:', data);
+      console.log('Character saved:', characterData);
+
+      // Then start the agent with the character ID
+      const { data: agentData } = await startAgent({
+        variables: {
+          characterId: characterData.insert_characters_one.id,
+        },
+      });
+      console.log('Agent started:', agentData?.startAgent);
+
       setShowDeployModal(false);
+      return agentData;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error saving character');
       console.error('Error saving character:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleStartAgent = async (characterId: string) => {
+    try {
+      const response = await startAgent({
+        variables: {
+          characterId,
+        },
+      });
+      // Handle success
+      console.log('Agent started:', response.data.startAgent);
+    } catch (error) {
+      // Handle error
+      console.error('Error starting agent:', error);
     }
   };
 
@@ -154,7 +198,13 @@ export default function AgentsPage() {
           <p className="text-white/70 mt-2">Manage and monitor your AI agents</p>
         </div>
         <button
-          onClick={() => setShowDeployModal(true)}
+          onClick={() => {
+            if (!authenticated) {
+              showToast('Please connect your wallet first', 'warning');
+              return;
+            }
+            setShowDeployModal(true);
+          }}
           className="button-primary flex items-center"
         >
           <PlusIcon className="w-5 h-5 mr-2" />
@@ -310,7 +360,15 @@ export default function AgentsPage() {
                   Cancel
                 </button>
                 <button
-                  onClick={handleSaveCharacter}
+                  onClick={async function () {
+                    const data = await handleSaveCharacter();
+                    const characterId = data?.insert_characters_one.id;
+                    console.log('characterId in deploy button', characterId);
+                    // if (data) {
+                    //   const startAgentResponse = await handleStartAgent(characterId);
+                    //   console.log('startAgentResponse in deploy button', startAgentResponse);
+                    // }
+                  }}
                   disabled={!characterJson || !userId || isLoading}
                   className="button-primary flex items-center"
                 >
