@@ -16,29 +16,13 @@ import {
   InstagramLogoIcon,
   LinkedInLogoIcon,
 } from '@radix-ui/react-icons';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { userIdAtom } from '@/components/LoginButton';
 import { useAtom } from 'jotai';
 import { useToast } from '@/components/ui/ToastContext';
 import { usePrivy } from '@privy-io/react-auth';
-
-// Update the mutation definition to remove isPublished
-const INSERT_CHARACTER = gql`
-  mutation InsertCharacter($character: jsonb!, $userId: uuid!, $agentId: uuid) {
-    insert_characters_one(object: { character: $character, userId: $userId, agentId: $agentId }) {
-      id
-      agentId
-    }
-  }
-`;
-
-const START_AGENT = gql`
-  mutation StartAgent($characterId: String!) {
-    startAgent(input: { characterId: $characterId }) {
-      id
-    }
-  }
-`;
+import { GET_CHARACTERS } from '@/graphql/queries/characters';
+import { INSERT_CHARACTER, START_AGENT } from '@/graphql/mutations/characters';
 
 export default function AgentsPage() {
   const [userId] = useAtom(userIdAtom);
@@ -57,8 +41,12 @@ export default function AgentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock data for agents
-  const agents = [
+  // Fetch characters data
+  const { data: charactersData, loading: charactersLoading } = useQuery(GET_CHARACTERS);
+  console.log('charactersData', charactersData);
+
+  // Default agent templates
+  const defaultAgents = [
     {
       id: 1,
       name: 'Community Manager AI',
@@ -85,8 +73,39 @@ export default function AgentsPage() {
         response_time: '45s',
       },
     },
-    // Add more mock agents as needed
   ];
+
+  // Merge character data with default agents
+  const agents =
+    charactersData?.characters.map((char: any) => {
+      const characterData = char.character;
+      const defaultAgent = defaultAgents[0]; // Use first default as base template
+
+      // Get the first client as platform, fallback to default
+      const platform = characterData?.clients?.[0] || defaultAgent.platform;
+
+      // Get the first topic as useCase, fallback to default
+      const useCase = characterData?.topics?.[0] || defaultAgent.useCase;
+
+      // Join bio array into a description
+      const description = characterData?.bio?.join(' ') || defaultAgent.description;
+
+      return {
+        ...defaultAgent,
+        name: characterData?.name || defaultAgent.name,
+        description,
+        platform,
+        useCase,
+        status: char.isActive ? 'active' : 'inactive',
+        isPublished: char.isPublished,
+        metrics: defaultAgent.metrics, // Keep default metrics since not provided in character data
+        // Additional character-specific data
+        style: characterData?.style,
+        knowledge: characterData?.knowledge,
+        modelProvider: characterData?.modelProvider,
+        settings: characterData?.settings,
+      };
+    }) || defaultAgents;
 
   const useCaseFilters = [
     { id: 'all', name: 'All Use Cases', icon: CommandLineIcon },
@@ -260,10 +279,12 @@ export default function AgentsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {agents
               .filter(
+                // @ts-expect-error ts is confused
                 agent =>
                   (activeFilter === 'all' || agent.useCase === activeFilter) &&
                   (activePlatformFilter === 'all' || agent.platform === activePlatformFilter)
               )
+              // @ts-expect-error ts is confused
               .map(agent => (
                 <motion.div
                   key={agent.id}
