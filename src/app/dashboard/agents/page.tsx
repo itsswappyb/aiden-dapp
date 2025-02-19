@@ -42,8 +42,19 @@ export default function AgentsPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch characters data
-  const { data: charactersData, loading: charactersLoading } = useQuery(GET_CHARACTERS);
-  console.log('charactersData', charactersData);
+  const {
+    data: charactersData,
+    loading: charactersLoading,
+    error: charactersError,
+  } = useQuery(GET_CHARACTERS, {
+    variables: { userId },
+    skip: !userId, // Skip the query if we don't have a userId
+  });
+
+  console.log('userId:', userId);
+  console.log('charactersLoading:', charactersLoading);
+  console.log('charactersError:', charactersError);
+  console.log('charactersData:', charactersData);
 
   // Default agent templates
   const defaultAgents = [
@@ -77,7 +88,7 @@ export default function AgentsPage() {
 
   // Merge character data with default agents
   const agents =
-    charactersData?.characters.map((char: any) => {
+    charactersData?.characters.map((char: any, index: number) => {
       const characterData = char.character;
       const defaultAgent = defaultAgents[0]; // Use first default as base template
 
@@ -92,6 +103,7 @@ export default function AgentsPage() {
 
       return {
         ...defaultAgent,
+        id: index + 1, // Use index as id since we don't get it from the API
         name: characterData?.name || defaultAgent.name,
         description,
         platform,
