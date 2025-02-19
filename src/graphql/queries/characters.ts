@@ -5,8 +5,8 @@ export const GET_CHARACTERS = gql`
     characters(where: { userId: { _eq: $userId } }) {
       id
       userId
-      # isActive
-      # isPublished
+      isActive
+      isPublished
       character
     }
   }
