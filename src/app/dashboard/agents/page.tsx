@@ -141,15 +141,15 @@ export default function AgentsPage() {
       console.log('Character saved:', characterData);
 
       // Then start the agent with the character ID
-      const { data: agentData } = await startAgent({
-        variables: {
-          characterId: characterData.insert_characters_one.id,
-        },
-      });
-      console.log('Agent started:', agentData?.startAgent);
+      // const { data: agentData } = await startAgent({
+      //   variables: {
+      //     characterId: characterData.insert_characters_one.id,
+      //   },
+      // });
+      // console.log('Agent started:', agentData?.startAgent);
 
       setShowDeployModal(false);
-      return agentData;
+      return characterData;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error saving character');
       console.error('Error saving character:', error);
