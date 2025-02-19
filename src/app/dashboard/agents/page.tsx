@@ -11,10 +11,10 @@ import {
   GlobeAltIcon,
 } from '@heroicons/react/24/outline';
 import {
-  DiscordLogoIcon,
+  // DiscordLogoIcon,
   TwitterLogoIcon,
-  InstagramLogoIcon,
-  LinkedInLogoIcon,
+  // InstagramLogoIcon,
+  // LinkedInLogoIcon,
 } from '@radix-ui/react-icons';
 import { useMutation, useQuery } from '@apollo/client';
 import { userIdAtom } from '@/components/LoginButton';
@@ -126,12 +126,15 @@ export default function AgentsPage() {
     { id: 'engagement', name: 'Social Engagement', icon: ChatBubbleLeftRightIcon },
   ];
 
+  // TODO: add missing icons
   const platformFilters = [
     { id: 'all', name: 'All Platforms', icon: GlobeAltIcon },
-    { id: 'discord', name: 'Discord', icon: DiscordLogoIcon },
+    // { id: 'discord', name: 'Discord', icon: DiscordLogoIcon },
     { id: 'twitter', name: 'Twitter', icon: TwitterLogoIcon },
-    { id: 'instagram', name: 'Instagram', icon: InstagramLogoIcon },
-    { id: 'linkedin', name: 'LinkedIn', icon: LinkedInLogoIcon },
+    { id: 'telegram', name: 'Telegram', icon: null },
+    { id: 'farcaster', name: 'Farcaster', icon: null },
+    // { id: 'instagram', name: 'Instagram', icon: InstagramLogoIcon },
+    // { id: 'linkedin', name: 'LinkedIn', icon: LinkedInLogoIcon },
   ];
 
   const deploymentTemplates = [
@@ -285,7 +288,7 @@ export default function AgentsPage() {
                         : 'border-white/10 text-white/70 hover:border-white/20'
                     }`}
                   >
-                    <filter.icon className="w-5 h-5 mr-2" />
+                    {filter?.icon && <filter.icon className="w-5 h-5 mr-2" />}
                     {filter.name}
                   </button>
                 ))}
