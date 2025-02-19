@@ -46,6 +46,7 @@ export default function AgentsPage() {
     data: charactersData,
     loading: charactersLoading,
     error: charactersError,
+    refetch: refetchCharacters,
   } = useQuery(GET_CHARACTERS, {
     variables: { userId },
     skip: !userId, // Skip the query if we don't have a userId
@@ -180,10 +181,16 @@ export default function AgentsPage() {
       // console.log('Agent started:', agentData?.startAgent);
 
       setShowDeployModal(false);
+      showToast('Character saved successfully', 'success');
+
+      // Refetch characters after saving
+      await refetchCharacters();
+
       return characterData;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Error saving character');
       console.error('Error saving character:', error);
+      showToast('Failed to save character', 'error');
     } finally {
       setIsLoading(false);
     }
