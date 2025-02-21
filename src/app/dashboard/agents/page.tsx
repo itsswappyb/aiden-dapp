@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   PlusIcon,
   ChatBubbleLeftRightIcon,
@@ -50,12 +51,20 @@ export default function AgentsPage() {
   } = useQuery(GET_CHARACTERS, {
     variables: { userId },
     skip: !userId, // Skip the query if we don't have a userId
+    notifyOnNetworkStatusChange: true, // This ensures loading state updates on refetch
   });
 
-  console.log('userId:', userId);
-  console.log('charactersLoading:', charactersLoading);
-  console.log('charactersError:', charactersError);
-  console.log('charactersData:', charactersData);
+  // Determine if we're in a loading state
+  const isLoadingCharacters = charactersLoading || (!charactersData && !charactersError);
+
+  console.log('Loading State Debug:', {
+    userId,
+    charactersLoading,
+    hasData: !!charactersData,
+    hasError: !!charactersError,
+    isLoadingCharacters,
+    skip: !userId,
+  });
 
   // Default agent templates
   const defaultAgents = [
@@ -88,37 +97,36 @@ export default function AgentsPage() {
   ];
 
   // Merge character data with default agents
-  const agents =
-    charactersData?.characters.map((char: any, index: number) => {
-      const characterData = char.character;
-      const defaultAgent = defaultAgents[0]; // Use first default as base template
+  const agents = charactersData?.characters?.map((char: any, index: number) => {
+    const characterData = char.character;
+    const defaultAgent = defaultAgents[0]; // Use first default as base template
 
-      // Get the first client as platform, fallback to default
-      const platform = characterData?.clients?.[0] || defaultAgent.platform;
+    // Get the first client as platform, fallback to default
+    const platform = characterData?.clients?.[0] || defaultAgent.platform;
 
-      // Get the first topic as useCase, fallback to default
-      const useCase = characterData?.topics?.[0] || defaultAgent.useCase;
+    // Get the first topic as useCase, fallback to default
+    const useCase = characterData?.topics?.[0] || defaultAgent.useCase;
 
-      // Join bio array into a description
-      const description = characterData?.bio?.join(' ') || defaultAgent.description;
+    // Join bio array into a description
+    const description = characterData?.bio?.join(' ') || defaultAgent.description;
 
-      return {
-        ...defaultAgent,
-        id: index + 1, // Use index as id since we don't get it from the API
-        name: characterData?.name || defaultAgent.name,
-        description,
-        platform,
-        useCase,
-        status: char.isActive ? 'active' : 'inactive',
-        isPublished: char.isPublished,
-        metrics: defaultAgent.metrics, // Keep default metrics since not provided in character data
-        // Additional character-specific data
-        style: characterData?.style,
-        knowledge: characterData?.knowledge,
-        modelProvider: characterData?.modelProvider,
-        settings: characterData?.settings,
-      };
-    }) || defaultAgents;
+    return {
+      // ...defaultAgent,
+      id: index + 1, // Use index as id since we don't get it from the API
+      name: characterData?.name || 'No Name',
+      description,
+      platform,
+      useCase,
+      status: char.isActive ? 'active' : 'inactive',
+      isPublished: char.isPublished,
+      metrics: defaultAgent.metrics, // Keep default metrics since not provided in character data
+      // Additional character-specific data
+      style: characterData?.style,
+      knowledge: characterData?.knowledge,
+      modelProvider: characterData?.modelProvider,
+      settings: characterData?.settings,
+    };
+  });
 
   const useCaseFilters = [
     { id: 'all', name: 'All Use Cases', icon: CommandLineIcon },
@@ -299,58 +307,89 @@ export default function AgentsPage() {
 
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agents
-              .filter(
-                // @ts-expect-error ts is confused
-                agent =>
-                  (activeFilter === 'all' || agent.useCase === activeFilter) &&
-                  (activePlatformFilter === 'all' || agent.platform === activePlatformFilter)
-              )
-              // @ts-expect-error ts is confused
-              .map(agent => (
-                <motion.div
-                  key={agent.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-accent/50 transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-medium text-white">{agent.name}</h3>
-                      <p className="text-white/50 text-sm mt-1">{agent.description}</p>
+            {isLoadingCharacters ? (
+              // Skeleton loading state
+              <>
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="p-6 rounded-xl bg-white/5 border border-white/10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-6 w-32" />
+                        <Skeleton className="h-4 w-48" />
+                      </div>
+                      <Skeleton className="h-6 w-16" />
                     </div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        agent.status === 'active'
-                          ? 'bg-green-500/10 text-green-500'
-                          : 'bg-yellow-500/10 text-yellow-500'
-                      }`}
-                    >
-                      {agent.status}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="text-center p-2 rounded-lg bg-white/5">
-                      <p className="text-xs text-white/50">Messages</p>
-                      <p className="text-lg font-medium text-accent">{agent.metrics.messages}</p>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      {[1, 2, 3].map(j => (
+                        <div key={j} className="text-center p-2 rounded-lg bg-white/5">
+                          <Skeleton className="h-3 w-12 mx-auto mb-1" />
+                          <Skeleton className="h-6 w-8 mx-auto" />
+                        </div>
+                      ))}
                     </div>
-                    <div className="text-center p-2 rounded-lg bg-white/5">
-                      <p className="text-xs text-white/50">Engagement</p>
-                      <p className="text-lg font-medium text-accent">{agent.metrics.engagement}</p>
-                    </div>
-                    <div className="text-center p-2 rounded-lg bg-white/5">
-                      <p className="text-xs text-white/50">Response</p>
-                      <p className="text-lg font-medium text-accent">
-                        {agent.metrics.response_time}
-                      </p>
+                    <div className="flex justify-end space-x-3">
+                      <Skeleton className="h-8 w-20" />
+                      <Skeleton className="h-8 w-24" />
                     </div>
                   </div>
-                  <div className="flex justify-end space-x-3">
-                    <button className="button-secondary text-sm">Configure</button>
-                    <button className="button-primary text-sm">View Details</button>
-                  </div>
-                </motion.div>
-              ))}
+                ))}
+              </>
+            ) : (
+              (agents || [])
+                .filter(
+                  // @ts-expect-error y r u ghey
+                  agent =>
+                    (activeFilter === 'all' || agent.useCase === activeFilter) &&
+                    (activePlatformFilter === 'all' || agent.platform === activePlatformFilter)
+                )
+                // @ts-expect-error y r u ghey
+                .map(agent => (
+                  <motion.div
+                    key={agent.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-accent/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-medium text-white">{agent.name}</h3>
+                        <p className="text-white/50 text-sm mt-1">{agent.description}</p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          agent.status === 'active'
+                            ? 'bg-green-500/10 text-green-500'
+                            : 'bg-yellow-500/10 text-yellow-500'
+                        }`}
+                      >
+                        {agent.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div className="text-center p-2 rounded-lg bg-white/5">
+                        <p className="text-xs text-white/50">Messages</p>
+                        <p className="text-lg font-medium text-accent">{agent.metrics.messages}</p>
+                      </div>
+                      <div className="text-center p-2 rounded-lg bg-white/5">
+                        <p className="text-xs text-white/50">Engagement</p>
+                        <p className="text-lg font-medium text-accent">
+                          {agent.metrics.engagement}
+                        </p>
+                      </div>
+                      <div className="text-center p-2 rounded-lg bg-white/5">
+                        <p className="text-xs text-white/50">Response</p>
+                        <p className="text-lg font-medium text-accent">
+                          {agent.metrics.response_time}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-3">
+                      <button className="button-secondary text-sm">Configure</button>
+                      <button className="button-primary text-sm">View Details</button>
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </div>
       </div>
