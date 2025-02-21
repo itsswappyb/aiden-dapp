@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CharacterForm } from '@/components/agents/CharacterForm';
 import {
   PlusIcon,
   ChatBubbleLeftRightIcon,
@@ -32,7 +33,7 @@ export default function AgentsPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [showDeployModal, setShowDeployModal] = useState(false);
-  const [characterJson, setCharacterJson] = useState<any>(null);
+
   const [isDeploying, setIsDeploying] = useState(false);
 
   // Add both mutation hooks
@@ -162,51 +163,6 @@ export default function AgentsPage() {
     },
   ];
 
-  // Update the handleSaveCharacter function to use id instead of agentId
-  const handleSaveCharacter = async () => {
-    if (!characterJson || !userId) {
-      setError('Missing character JSON or user ID');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // First save the character
-      const { data: characterData } = await insertCharacter({
-        variables: {
-          character: characterJson,
-          userId: userId,
-          agentId: null,
-        },
-      });
-      console.log('Character saved:', characterData);
-
-      // Then start the agent with the character ID
-      // const { data: agentData } = await startAgent({
-      //   variables: {
-      //     characterId: characterData.insert_characters_one.id,
-      //   },
-      // });
-      // console.log('Agent started:', agentData?.startAgent);
-
-      setShowDeployModal(false);
-      showToast('Character saved successfully', 'success');
-
-      // Refetch characters after saving
-      await refetchCharacters();
-
-      return characterData;
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Error saving character');
-      console.error('Error saving character:', error);
-      showToast('Failed to save character', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleStartAgent = async (characterId: string) => {
     try {
       const response = await startAgent({
@@ -214,28 +170,12 @@ export default function AgentsPage() {
           characterId,
         },
       });
-      // Handle success
+      showToast('Agent started successfully', 'success');
       console.log('Agent started:', response.data.startAgent);
-    } catch (error) {
-      // Handle error
-      console.error('Error starting agent:', error);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = event => {
-        try {
-          const json = JSON.parse(event.target?.result as string);
-          setCharacterJson(json);
-          console.log('Parsed JSON:', json);
-        } catch (error) {
-          console.error('Error parsing JSON:', error);
-        }
-      };
-      reader.readAsText(file);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error starting agent';
+      showToast(errorMessage, 'error');
+      console.error('Error starting agent:', err);
     }
   };
 
@@ -437,22 +377,35 @@ export default function AgentsPage() {
                 </div>
               )}
               <div>
-                <h3 className="text-lg font-medium text-white mb-4">Upload Character File</h3>
+                <h3 className="text-lg font-medium text-white mb-4">Create Character</h3>
                 <div className="p-4 rounded-lg border border-white/10">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-white mb-2">Character JSON File</label>
-                      <input
-                        type="file"
-                        accept="application/json"
-                        onChange={handleFileChange}
-                        className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent/20 file:text-accent hover:file:bg-accent/30 file:cursor-pointer"
-                      />
-                      <p className="text-white/50 text-sm mt-2">
-                        Upload a JSON file containing the agent&apos;s character configuration
-                      </p>
-                    </div>
-                  </div>
+                  <CharacterForm
+                    onFormSubmit={async data => {
+                      try {
+                        setIsLoading(true);
+                        const { data: characterData } = await insertCharacter({
+                          variables: {
+                            character: data,
+                            userId: userId,
+                            agentId: null,
+                          },
+                        });
+
+                        setShowDeployModal(false);
+                        showToast('Character saved successfully', 'success');
+                        await refetchCharacters();
+                        return characterData;
+                      } catch (err) {
+                        const errorMessage =
+                          err instanceof Error ? err.message : 'Error saving character';
+                        setError(errorMessage);
+                        showToast('Failed to save character', 'error');
+                        throw err;
+                      } finally {
+                        setIsLoading(false);
+                      }
+                    }}
+                  />
                 </div>
               </div>
               <div className="flex justify-end space-x-3">
@@ -460,16 +413,8 @@ export default function AgentsPage() {
                   Cancel
                 </button>
                 <button
-                  onClick={async function () {
-                    const data = await handleSaveCharacter();
-                    const characterId = data?.insert_characters_one.id;
-                    console.log('characterId in deploy button', characterId);
-                    // if (data) {
-                    //   const startAgentResponse = await handleStartAgent(characterId);
-                    //   console.log('startAgentResponse in deploy button', startAgentResponse);
-                    // }
-                  }}
-                  disabled={!characterJson || !userId || isLoading}
+                  onClick={() => setShowDeployModal(false)}
+                  disabled={isLoading}
                   className="button-primary flex items-center"
                 >
                   {isLoading ? (
