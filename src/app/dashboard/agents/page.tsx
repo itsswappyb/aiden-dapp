@@ -112,7 +112,7 @@ export default function AgentsPage() {
 
     return {
       // ...defaultAgent,
-      id: index + 1, // Use index as id since we don't get it from the API
+      characterId: char.id, // Use the actual character ID from the database
       name: characterData?.name || 'No Name',
       description,
       platform,
@@ -345,7 +345,7 @@ export default function AgentsPage() {
                 // @ts-expect-error y r u ghey
                 .map(agent => (
                   <motion.div
-                    key={agent.id}
+                    key={agent.characterId}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-accent/50 transition-colors"
@@ -384,8 +384,26 @@ export default function AgentsPage() {
                       </div>
                     </div>
                     <div className="flex justify-end space-x-3">
-                      <button className="button-secondary text-sm">Configure</button>
-                      <button className="button-primary text-sm">View Details</button>
+                      {agent.status === 'active' ? (
+                        <button
+                          className="px-4 py-2 text-sm font-medium rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
+                          onClick={() => {
+                            // TODO: Implement stop agent logic
+                            console.log('Stop agent:', agent.id);
+                          }}
+                        >
+                          Stop
+                        </button>
+                      ) : (
+                        <button
+                          className="px-4 py-2 text-sm font-medium rounded-lg bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-colors"
+                          onClick={() => {
+                            handleStartAgent(agent.characterId);
+                          }}
+                        >
+                          Start
+                        </button>
+                      )}
                     </div>
                   </motion.div>
                 ))
