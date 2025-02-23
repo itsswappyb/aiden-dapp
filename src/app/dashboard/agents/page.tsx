@@ -24,7 +24,7 @@ import { useAtom } from 'jotai';
 import { useToast } from '@/components/ui/ToastContext';
 import { usePrivy } from '@privy-io/react-auth';
 import { GET_CHARACTERS } from '@/graphql/queries/characters';
-import { INSERT_CHARACTER, START_AGENT } from '@/graphql/mutations/characters';
+import { INSERT_CHARACTER, START_AGENT, STOP_AGENT } from '@/graphql/mutations/characters';
 
 export default function AgentsPage() {
   const [userId] = useAtom(userIdAtom);
@@ -40,6 +40,7 @@ export default function AgentsPage() {
   const [insertCharacter] = useMutation(INSERT_CHARACTER);
   const [startAgent, { loading: startAgentLoading, error: startAgentError, data: startAgentData }] =
     useMutation(START_AGENT);
+  const [stopAgent] = useMutation(STOP_AGENT);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -108,8 +109,10 @@ export default function AgentsPage() {
     // Get the first topic as useCase, fallback to default
     const useCase = characterData?.topics?.[0] || defaultAgent.useCase;
 
-    // Join bio array into a description
-    const description = characterData?.bio?.join(' ') || defaultAgent.description;
+    // Handle bio which could be string or array
+    const description = Array.isArray(characterData?.bio)
+      ? characterData.bio.join(' ')
+      : characterData?.bio || defaultAgent.description;
 
     return {
       // ...defaultAgent,
@@ -165,6 +168,7 @@ export default function AgentsPage() {
 
   const handleStartAgent = async (characterId: string) => {
     try {
+      setIsDeploying(true);
       const response = await startAgent({
         variables: {
           characterId,
@@ -172,10 +176,37 @@ export default function AgentsPage() {
       });
       showToast('Agent started successfully', 'success');
       console.log('Agent started:', response.data.startAgent);
+      await refetchCharacters();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error starting agent';
       showToast(errorMessage, 'error');
       console.error('Error starting agent:', err);
+    } finally {
+      setIsDeploying(false);
+    }
+  };
+
+  const handleStopAgent = async (characterId: string) => {
+    try {
+      setIsDeploying(true);
+      const { data } = await stopAgent({
+        variables: {
+          characterId,
+        },
+      });
+
+      if (!data?.stopAgent?.id) {
+        throw new Error('Failed to stop agent');
+      }
+
+      showToast('Agent stopped successfully', 'success');
+      await refetchCharacters();
+    } catch (error) {
+      console.error('Error stopping agent:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to stop agent';
+      showToast(errorMessage, 'error');
+    } finally {
+      setIsDeploying(false);
     }
   };
 
@@ -328,8 +359,7 @@ export default function AgentsPage() {
                         <button
                           className="px-4 py-2 text-sm font-medium rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
                           onClick={() => {
-                            // TODO: Implement stop agent logic
-                            console.log('Stop agent:', agent.id);
+                            handleStopAgent(agent.characterId);
                           }}
                         >
                           Stop
@@ -380,27 +410,35 @@ export default function AgentsPage() {
                 <h3 className="text-lg font-medium text-white mb-4">Create Character</h3>
                 <div className="p-4 rounded-lg border border-white/10">
                   <CharacterForm
-                    onFormSubmit={async data => {
+                    onFormSubmit={async formData => {
                       try {
                         setIsLoading(true);
+                        setError(null);
+
                         const { data: characterData } = await insertCharacter({
                           variables: {
-                            character: data,
+                            character: formData,
+                            isActive: false,
                             userId: userId,
                             agentId: null,
                           },
                         });
 
-                        setShowDeployModal(false);
-                        showToast('Character saved successfully', 'success');
+                        if (!characterData?.insert_characters_one?.id) {
+                          throw new Error('Failed to create character: No ID returned');
+                        }
+
+                        showToast('Character created successfully!', 'success');
                         await refetchCharacters();
+                        setShowDeployModal(false);
                         return characterData;
-                      } catch (err) {
+                      } catch (error) {
                         const errorMessage =
-                          err instanceof Error ? err.message : 'Error saving character';
+                          error instanceof Error ? error.message : 'Failed to create character';
+                        console.error('Error creating character:', error);
                         setError(errorMessage);
-                        showToast('Failed to save character', 'error');
-                        throw err;
+                        showToast(errorMessage, 'error');
+                        throw error;
                       } finally {
                         setIsLoading(false);
                       }

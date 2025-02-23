@@ -16,3 +16,11 @@ export const START_AGENT = gql`
     }
   }
 `;
+
+export const STOP_AGENT = gql`
+  mutation StopAgent($characterId: String!) {
+    stopAgent(input: { characterId: $characterId }) {
+      id
+    }
+  }
+`;
