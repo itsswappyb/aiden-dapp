@@ -357,14 +357,14 @@ export default function AgentsPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto relative"
+            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto relative rounded-xl bg-gradient-to-b from-[#011829] via-[#030f1c] to-black/50 border border-white/5"
           >
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-medium text-white">Deploy New Agent</h2>
                 <button
                   onClick={() => setShowDeployModal(false)}
-                  className="text-white/50 hover:text-white"
+                  className="text-white/50 hover:text-white transition-colors"
                 >
                   ✕
                 </button>
@@ -378,7 +378,7 @@ export default function AgentsPage() {
               )}
               <div>
                 <h3 className="text-lg font-medium text-white mb-4">Create Character</h3>
-                <div className="p-4 rounded-lg border border-white/10">
+                <div className="rounded-lg">
                   <CharacterForm
                     onFormSubmit={async data => {
                       try {
@@ -408,7 +408,7 @@ export default function AgentsPage() {
                   />
                 </div>
               </div>
-              <div className="flex justify-end space-x-3">
+              {/* <div className="flex justify-end space-x-3">
                 <button onClick={() => setShowDeployModal(false)} className="button-secondary">
                   Cancel
                 </button>
@@ -448,7 +448,7 @@ export default function AgentsPage() {
                     </>
                   )}
                 </button>
-              </div>
+              </div> */}
             </div>
           </motion.div>
         </div>

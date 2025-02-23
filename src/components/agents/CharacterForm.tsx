@@ -53,10 +53,10 @@ const StyleField = ({ label, control, name }: StyleFieldProps) => {
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className="block text-sm font-medium text-white/80">{label}</label>
       <textarea
         placeholder="Enter style instructions (one per line)"
-        className="w-full min-h-[100px] rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        className="w-full min-h-[100px] rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
         value={field.value?.join('\n') || ''}
         onChange={e => {
           const lines = e.target.value
@@ -66,6 +66,7 @@ const StyleField = ({ label, control, name }: StyleFieldProps) => {
           field.onChange(lines);
         }}
       />
+      <p className="text-sm text-white/50">Enter each style instruction on a new line</p>
     </div>
   );
 };
@@ -117,106 +118,112 @@ export function CharacterForm({
   });
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-      <div className="space-y-6">
+    <form
+      onSubmit={form.handleSubmit(handleSubmit)}
+      className="space-y-8 p-6 rounded-xl bg-gradient-to-b from-[#011829] via-[#030f1c] to-black/50 border border-white/5"
+    >
+      <div className="space-y-8">
         {/* Basic Information */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label className="block text-sm font-medium text-white/80">Name</label>
             <input
               {...form.register('name')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-              placeholder="Character name"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
+              placeholder="Enter character name"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Bio</label>
+            <label className="block text-sm font-medium text-white/80">Bio</label>
             <textarea
               {...form.register('bio')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-              rows={4}
-              placeholder="Character biography"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent min-h-[100px]"
+              placeholder="Describe your character's personality and role"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Lore</label>
+            <label className="block text-sm font-medium text-white/80">Lore</label>
             <textarea
               {...form.register('lore')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-              rows={4}
-              placeholder="Character lore and background"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent min-h-[100px]"
+              placeholder="Add background story and context"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">System Prompt</label>
+            <label className="block text-sm font-medium text-white/80">System Prompt</label>
             <textarea
               {...form.register('system')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-              rows={4}
-              placeholder="System instructions for the character"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent min-h-[100px]"
+              placeholder="Define core behavior and rules"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">OpenAI API Key</label>
+            <label className="block text-sm font-medium text-white/80">OpenAI API Key</label>
             <input
               type="password"
               {...form.register('settings.secrets.OPENAI_API_KEY')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
               placeholder="sk-..."
             />
+            <p className="mt-1 text-sm text-white/50">Your API key will be encrypted</p>
           </div>
         </div>
       </div>
 
       {/* Model Settings */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Model Provider</label>
-          <select
-            {...form.register('modelProvider')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-          >
-            <option value="openai">OpenAI</option>
-          </select>
+      <div className="space-y-6">
+        <h3 className="text-lg font-medium text-white">Model Configuration</h3>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-white/80">Model Provider</label>
+            <select
+              {...form.register('modelProvider')}
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white focus:border-accent focus:ring-accent"
+            >
+              <option value="openai">OpenAI</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Secrets */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">API Keys & Secrets</h3>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="space-y-6">
+        <h3 className="text-lg font-medium text-white">API Keys & Secrets</h3>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700">OpenAI API Key</label>
+            <label className="block text-sm font-medium text-white/80">OpenAI API Key</label>
             <input
               type="password"
               {...form.register('settings.secrets.OPENAI_API_KEY')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Twitter Username</label>
+            <label className="block text-sm font-medium text-white/80">Twitter Username</label>
             <input
               {...form.register('settings.secrets.TWITTER_USERNAME')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
+              placeholder="@username"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Twitter Password</label>
+            <label className="block text-sm font-medium text-white/80">Twitter Password</label>
             <input
               type="password"
               {...form.register('settings.secrets.TWITTER_PASSWORD')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Twitter Email</label>
+            <label className="block text-sm font-medium text-white/80">Twitter Email</label>
             <input
               {...form.register('settings.secrets.TWITTER_EMAIL')}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-2 block w-full rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
+              placeholder="email@example.com"
             />
           </div>
         </div>
@@ -224,7 +231,7 @@ export function CharacterForm({
 
       {/* Style Fields */}
       <div className="space-y-6">
-        <h3 className="text-lg font-medium text-gray-900">Style Configuration</h3>
+        <h3 className="text-lg font-medium text-white">Style Configuration</h3>
 
         <StyleField label="General Style" control={form.control} name="all" />
 
@@ -233,12 +240,8 @@ export function CharacterForm({
         <StyleField label="Post Style" control={form.control} name="post" />
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? 'Saving...' : 'Create Character'}
+      <button type="submit" disabled={isSubmitting} className="button-primary w-full">
+        {isSubmitting ? 'Creating Character...' : 'Create Character'}
       </button>
     </form>
   );
