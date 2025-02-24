@@ -109,7 +109,7 @@ export function LoginButton() {
           <UserGroupIcon className="w-4 h-4 text-accent" />
         </div>
         <div className="ml-3">
-          <p className="text-sm text-white/70">Connected Wallet</p>
+          {/* <p className="text-sm text-white/70">Connected Wallet</p> */}
           <p className="text-xs text-accent truncate">
             {solanaWallet?.address.slice(0, 4)}...{solanaWallet?.address.slice(-4)}
           </p>
@@ -118,7 +118,7 @@ export function LoginButton() {
               e.preventDefault();
               logout();
             }}
-            className="text-xs text-red-400 hover:text-red-300 mt-1"
+            className="text-xs flex items-center justify-center px-3 py-1.5 mt-1 text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
           >
             Disconnect
           </button>

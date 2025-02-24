@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CharacterForm } from '@/components/agents/CharacterForm';
 import {
   PlusIcon,
   ChatBubbleLeftRightIcon,
@@ -11,34 +13,18 @@ import {
   GlobeAltIcon,
 } from '@heroicons/react/24/outline';
 import {
-  DiscordLogoIcon,
+  // DiscordLogoIcon,
   TwitterLogoIcon,
-  InstagramLogoIcon,
-  LinkedInLogoIcon,
+  // InstagramLogoIcon,
+  // LinkedInLogoIcon,
 } from '@radix-ui/react-icons';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { userIdAtom } from '@/components/LoginButton';
 import { useAtom } from 'jotai';
 import { useToast } from '@/components/ui/ToastContext';
 import { usePrivy } from '@privy-io/react-auth';
-
-// Update the mutation definition to remove isPublished
-const INSERT_CHARACTER = gql`
-  mutation InsertCharacter($character: jsonb!, $userId: uuid!, $agentId: uuid) {
-    insert_characters_one(object: { character: $character, userId: $userId, agentId: $agentId }) {
-      id
-      agentId
-    }
-  }
-`;
-
-const START_AGENT = gql`
-  mutation StartAgent($characterId: String!) {
-    startAgent(input: { characterId: $characterId }) {
-      id
-    }
-  }
-`;
+import { GET_CHARACTERS } from '@/graphql/queries/characters';
+import { INSERT_CHARACTER, START_AGENT, STOP_AGENT } from '@/graphql/mutations/characters';
 
 export default function AgentsPage() {
   const [userId] = useAtom(userIdAtom);
@@ -47,18 +33,43 @@ export default function AgentsPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [activePlatformFilter, setActivePlatformFilter] = useState('all');
   const [showDeployModal, setShowDeployModal] = useState(false);
-  const [characterJson, setCharacterJson] = useState<any>(null);
+
   const [isDeploying, setIsDeploying] = useState(false);
 
   // Add both mutation hooks
   const [insertCharacter] = useMutation(INSERT_CHARACTER);
   const [startAgent, { loading: startAgentLoading, error: startAgentError, data: startAgentData }] =
     useMutation(START_AGENT);
+  const [stopAgent] = useMutation(STOP_AGENT);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock data for agents
-  const agents = [
+  // Fetch characters data
+  const {
+    data: charactersData,
+    loading: charactersLoading,
+    error: charactersError,
+    refetch: refetchCharacters,
+  } = useQuery(GET_CHARACTERS, {
+    variables: { userId },
+    skip: !userId, // Skip the query if we don't have a userId
+    notifyOnNetworkStatusChange: true, // This ensures loading state updates on refetch
+  });
+
+  // Determine if we're in a loading state
+  const isLoadingCharacters = charactersLoading || (!charactersData && !charactersError);
+
+  console.log('Loading State Debug:', {
+    userId,
+    charactersLoading,
+    hasData: !!charactersData,
+    hasError: !!charactersError,
+    isLoadingCharacters,
+    skip: !userId,
+  });
+
+  // Default agent templates
+  const defaultAgents = [
     {
       id: 1,
       name: 'Community Manager AI',
@@ -85,8 +96,41 @@ export default function AgentsPage() {
         response_time: '45s',
       },
     },
-    // Add more mock agents as needed
   ];
+
+  // Merge character data with default agents
+  const agents = charactersData?.characters?.map((char: any, index: number) => {
+    const characterData = char.character;
+    const defaultAgent = defaultAgents[0]; // Use first default as base template
+
+    // Get the first client as platform, fallback to default
+    const platform = characterData?.clients?.[0] || defaultAgent.platform;
+
+    // Get the first topic as useCase, fallback to default
+    const useCase = characterData?.topics?.[0] || defaultAgent.useCase;
+
+    // Handle bio which could be string or array
+    const description = Array.isArray(characterData?.bio)
+      ? characterData.bio.join(' ')
+      : characterData?.bio || defaultAgent.description;
+
+    return {
+      // ...defaultAgent,
+      characterId: char.id, // Use the actual character ID from the database
+      name: characterData?.name || 'No Name',
+      description,
+      platform,
+      useCase,
+      status: char.isActive ? 'active' : 'inactive',
+      isPublished: char.isPublished,
+      metrics: defaultAgent.metrics, // Keep default metrics since not provided in character data
+      // Additional character-specific data
+      style: characterData?.style,
+      knowledge: characterData?.knowledge,
+      modelProvider: characterData?.modelProvider,
+      settings: characterData?.settings,
+    };
+  });
 
   const useCaseFilters = [
     { id: 'all', name: 'All Use Cases', icon: CommandLineIcon },
@@ -94,12 +138,15 @@ export default function AgentsPage() {
     { id: 'engagement', name: 'Social Engagement', icon: ChatBubbleLeftRightIcon },
   ];
 
+  // TODO: add missing icons
   const platformFilters = [
     { id: 'all', name: 'All Platforms', icon: GlobeAltIcon },
-    { id: 'discord', name: 'Discord', icon: DiscordLogoIcon },
+    // { id: 'discord', name: 'Discord', icon: DiscordLogoIcon },
     { id: 'twitter', name: 'Twitter', icon: TwitterLogoIcon },
-    { id: 'instagram', name: 'Instagram', icon: InstagramLogoIcon },
-    { id: 'linkedin', name: 'LinkedIn', icon: LinkedInLogoIcon },
+    { id: 'telegram', name: 'Telegram', icon: null },
+    { id: 'farcaster', name: 'Farcaster', icon: null },
+    // { id: 'instagram', name: 'Instagram', icon: InstagramLogoIcon },
+    // { id: 'linkedin', name: 'LinkedIn', icon: LinkedInLogoIcon },
   ];
 
   const deploymentTemplates = [
@@ -119,74 +166,47 @@ export default function AgentsPage() {
     },
   ];
 
-  // Update the handleSaveCharacter function to use id instead of agentId
-  const handleSaveCharacter = async () => {
-    if (!characterJson || !userId) {
-      setError('Missing character JSON or user ID');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // First save the character
-      const { data: characterData } = await insertCharacter({
-        variables: {
-          character: characterJson,
-          userId: userId,
-          agentId: null,
-        },
-      });
-      console.log('Character saved:', characterData);
-
-      // Then start the agent with the character ID
-      const { data: agentData } = await startAgent({
-        variables: {
-          characterId: characterData.insert_characters_one.id,
-        },
-      });
-      console.log('Agent started:', agentData?.startAgent);
-
-      setShowDeployModal(false);
-      return agentData;
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Error saving character');
-      console.error('Error saving character:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleStartAgent = async (characterId: string) => {
     try {
+      setIsDeploying(true);
       const response = await startAgent({
         variables: {
           characterId,
         },
       });
-      // Handle success
+      showToast('Agent started successfully', 'success');
       console.log('Agent started:', response.data.startAgent);
-    } catch (error) {
-      // Handle error
-      console.error('Error starting agent:', error);
+      await refetchCharacters();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error starting agent';
+      showToast(errorMessage, 'error');
+      console.error('Error starting agent:', err);
+    } finally {
+      setIsDeploying(false);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = event => {
-        try {
-          const json = JSON.parse(event.target?.result as string);
-          setCharacterJson(json);
-          console.log('Parsed JSON:', json);
-        } catch (error) {
-          console.error('Error parsing JSON:', error);
-        }
-      };
-      reader.readAsText(file);
+  const handleStopAgent = async (characterId: string) => {
+    try {
+      setIsDeploying(true);
+      const { data } = await stopAgent({
+        variables: {
+          characterId,
+        },
+      });
+
+      if (!data?.stopAgent?.id) {
+        throw new Error('Failed to stop agent');
+      }
+
+      showToast('Agent stopped successfully', 'success');
+      await refetchCharacters();
+    } catch (error) {
+      console.error('Error stopping agent:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to stop agent';
+      showToast(errorMessage, 'error');
+    } finally {
+      setIsDeploying(false);
     }
   };
 
@@ -247,7 +267,7 @@ export default function AgentsPage() {
                         : 'border-white/10 text-white/70 hover:border-white/20'
                     }`}
                   >
-                    <filter.icon className="w-5 h-5 mr-2" />
+                    {filter?.icon && <filter.icon className="w-5 h-5 mr-2" />}
                     {filter.name}
                   </button>
                 ))}
@@ -258,56 +278,106 @@ export default function AgentsPage() {
 
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agents
-              .filter(
-                agent =>
-                  (activeFilter === 'all' || agent.useCase === activeFilter) &&
-                  (activePlatformFilter === 'all' || agent.platform === activePlatformFilter)
-              )
-              .map(agent => (
-                <motion.div
-                  key={agent.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-accent/50 transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-medium text-white">{agent.name}</h3>
-                      <p className="text-white/50 text-sm mt-1">{agent.description}</p>
+            {isLoadingCharacters ? (
+              // Skeleton loading state
+              <>
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="p-6 rounded-xl bg-white/5 border border-white/10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-6 w-32" />
+                        <Skeleton className="h-4 w-48" />
+                      </div>
+                      <Skeleton className="h-6 w-16" />
                     </div>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        agent.status === 'active'
-                          ? 'bg-green-500/10 text-green-500'
-                          : 'bg-yellow-500/10 text-yellow-500'
-                      }`}
-                    >
-                      {agent.status}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="text-center p-2 rounded-lg bg-white/5">
-                      <p className="text-xs text-white/50">Messages</p>
-                      <p className="text-lg font-medium text-accent">{agent.metrics.messages}</p>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      {[1, 2, 3].map(j => (
+                        <div key={j} className="text-center p-2 rounded-lg bg-white/5">
+                          <Skeleton className="h-3 w-12 mx-auto mb-1" />
+                          <Skeleton className="h-6 w-8 mx-auto" />
+                        </div>
+                      ))}
                     </div>
-                    <div className="text-center p-2 rounded-lg bg-white/5">
-                      <p className="text-xs text-white/50">Engagement</p>
-                      <p className="text-lg font-medium text-accent">{agent.metrics.engagement}</p>
-                    </div>
-                    <div className="text-center p-2 rounded-lg bg-white/5">
-                      <p className="text-xs text-white/50">Response</p>
-                      <p className="text-lg font-medium text-accent">
-                        {agent.metrics.response_time}
-                      </p>
+                    <div className="flex justify-end space-x-3">
+                      <Skeleton className="h-8 w-20" />
+                      <Skeleton className="h-8 w-24" />
                     </div>
                   </div>
-                  <div className="flex justify-end space-x-3">
-                    <button className="button-secondary text-sm">Configure</button>
-                    <button className="button-primary text-sm">View Details</button>
-                  </div>
-                </motion.div>
-              ))}
+                ))}
+              </>
+            ) : (
+              (agents || [])
+                .filter(
+                  // @ts-expect-error y r u ghey
+                  agent =>
+                    (activeFilter === 'all' || agent.useCase === activeFilter) &&
+                    (activePlatformFilter === 'all' || agent.platform === activePlatformFilter)
+                )
+                // @ts-expect-error y r u ghey
+                .map(agent => (
+                  <motion.div
+                    key={agent.characterId}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-accent/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-medium text-white">{agent.name}</h3>
+                        <p className="text-white/50 text-sm mt-1">{agent.description}</p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          agent.status === 'active'
+                            ? 'bg-green-500/10 text-green-500'
+                            : 'bg-yellow-500/10 text-yellow-500'
+                        }`}
+                      >
+                        {agent.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div className="text-center p-2 rounded-lg bg-white/5">
+                        <p className="text-xs text-white/50">Messages</p>
+                        <p className="text-lg font-medium text-accent">{agent.metrics.messages}</p>
+                      </div>
+                      <div className="text-center p-2 rounded-lg bg-white/5">
+                        <p className="text-xs text-white/50">Engagement</p>
+                        <p className="text-lg font-medium text-accent">
+                          {agent.metrics.engagement}
+                        </p>
+                      </div>
+                      <div className="text-center p-2 rounded-lg bg-white/5">
+                        <p className="text-xs text-white/50">Response</p>
+                        <p className="text-lg font-medium text-accent">
+                          {agent.metrics.response_time}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-3">
+                      {agent.status === 'active' ? (
+                        <button
+                          className="px-4 py-2 text-sm font-medium rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
+                          onClick={() => {
+                            handleStopAgent(agent.characterId);
+                          }}
+                        >
+                          Stop
+                        </button>
+                      ) : (
+                        <button
+                          className="px-4 py-2 text-sm font-medium rounded-lg bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-colors"
+                          onClick={() => {
+                            handleStartAgent(agent.characterId);
+                          }}
+                        >
+                          Start
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                ))
+            )}
           </div>
         </div>
       </div>
@@ -317,14 +387,14 @@ export default function AgentsPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto relative"
+            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto relative rounded-xl bg-gradient-to-b from-[#011829] via-[#030f1c] to-black/50 border border-white/5"
           >
             <div className="p-6 border-b border-white/10">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-medium text-white">Deploy New Agent</h2>
                 <button
                   onClick={() => setShowDeployModal(false)}
-                  className="text-white/50 hover:text-white"
+                  className="text-white/50 hover:text-white transition-colors"
                 >
                   ✕
                 </button>
@@ -337,39 +407,52 @@ export default function AgentsPage() {
                 </div>
               )}
               <div>
-                <h3 className="text-lg font-medium text-white mb-4">Upload Character File</h3>
-                <div className="p-4 rounded-lg border border-white/10">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-white mb-2">Character JSON File</label>
-                      <input
-                        type="file"
-                        accept="application/json"
-                        onChange={handleFileChange}
-                        className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent/20 file:text-accent hover:file:bg-accent/30 file:cursor-pointer"
-                      />
-                      <p className="text-white/50 text-sm mt-2">
-                        Upload a JSON file containing the agent&apos;s character configuration
-                      </p>
-                    </div>
-                  </div>
+                <h3 className="text-lg font-medium text-white mb-4">Create Character</h3>
+                <div className="rounded-lg">
+                  <CharacterForm
+                    onFormSubmit={async formData => {
+                      try {
+                        setIsLoading(true);
+                        setError(null);
+
+                        const { data: characterData } = await insertCharacter({
+                          variables: {
+                            character: formData,
+                            isActive: false,
+                            userId: userId,
+                            agentId: null,
+                          },
+                        });
+
+                        if (!characterData?.insert_characters_one?.id) {
+                          throw new Error('Failed to create character: No ID returned');
+                        }
+
+                        showToast('Character created successfully!', 'success');
+                        await refetchCharacters();
+                        setShowDeployModal(false);
+                        return characterData;
+                      } catch (error) {
+                        const errorMessage =
+                          error instanceof Error ? error.message : 'Failed to create character';
+                        console.error('Error creating character:', error);
+                        setError(errorMessage);
+                        showToast(errorMessage, 'error');
+                        throw error;
+                      } finally {
+                        setIsLoading(false);
+                      }
+                    }}
+                  />
                 </div>
               </div>
-              <div className="flex justify-end space-x-3">
+              {/* <div className="flex justify-end space-x-3">
                 <button onClick={() => setShowDeployModal(false)} className="button-secondary">
                   Cancel
                 </button>
                 <button
-                  onClick={async function () {
-                    const data = await handleSaveCharacter();
-                    const characterId = data?.insert_characters_one.id;
-                    console.log('characterId in deploy button', characterId);
-                    // if (data) {
-                    //   const startAgentResponse = await handleStartAgent(characterId);
-                    //   console.log('startAgentResponse in deploy button', startAgentResponse);
-                    // }
-                  }}
-                  disabled={!characterJson || !userId || isLoading}
+                  onClick={() => setShowDeployModal(false)}
+                  disabled={isLoading}
                   className="button-primary flex items-center"
                 >
                   {isLoading ? (
@@ -403,7 +486,7 @@ export default function AgentsPage() {
                     </>
                   )}
                 </button>
-              </div>
+              </div> */}
             </div>
           </motion.div>
         </div>
