@@ -12,7 +12,7 @@ export const characterSchema = z.object({
   bio: z.string().min(1, 'Bio is required'),
   // one of 'twitter' or 'telegram'
   clients: z.array(z.enum(['twitter', 'telegram'])),
-  lore: z.string(),
+  lore: z.array(z.string()),
   system: z.string(),
   modelProvider: z.string().default('openai'),
   settings: z.object({
@@ -34,6 +34,10 @@ export const characterSchema = z.object({
     chat: z.array(z.string()).default([]),
     post: z.array(z.string()).default([]),
   }),
+  messageExamples: z.array(z.array(z.any())),
+  postExamples: z.array(z.string()),
+  topics: z.array(z.string()),
+  adjectives: z.array(z.string()),
 });
 
 type CharacterFormData = z.infer<typeof characterSchema>;
@@ -109,6 +113,10 @@ export function CharacterForm({
       },
       knowledge: [''],
       plugins: [],
+      messageExamples: [],
+      postExamples: [],
+      topics: [],
+      adjectives: [],
       style: {
         all: [],
         chat: [],
