@@ -3,84 +3,39 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
-import {
-  ChartBarIcon,
-  UserGroupIcon,
-  Cog6ToothIcon,
-  CommandLineIcon,
-  ChatBubbleLeftRightIcon,
-  DocumentIcon,
-  BeakerIcon,
-} from '@heroicons/react/24/outline';
-import { usePrivy } from '@privy-io/react-auth';
-import { LoginButton } from '@/components/LoginButton';
+import { ChartBarIcon, CommandLineIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import AuthWrapper from '@/components/auth/AuthWrapper';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: ChartBarIcon },
   { name: 'My Agents', href: '/dashboard/agents', icon: CommandLineIcon },
   { name: 'Knowledge Base', href: '/dashboard/knowledge', icon: DocumentIcon },
-  // { name: 'Training Center', href: '/dashboard/training', icon: BeakerIcon },
-  // { name: 'Community', href: '/dashboard/community', icon: UserGroupIcon },
-  // { name: 'Conversations', href: '/dashboard/conversations', icon: ChatBubbleLeftRightIcon },
-  // { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const { ready, authenticated, user } = usePrivy();
-
-  // const renderWalletSection = () => {
-  //   if (!ready) {
-  //     return null;
-  //   }
-
-  //   if (!authenticated) {
-  //     return <LoginButton />;
-  //   }
-
-  //   return (
-  //     <div className="flex items-center">
-  //       <div className="w-8 h-8 rounded-full bg-[#87fafd]/20 flex items-center justify-center">
-  //         <UserGroupIcon className="w-4 h-4 text-accent" />
-  //       </div>
-  //       {isSidebarOpen && (
-  //         <div className="ml-3">
-  //           <p className="text-sm text-white/70">Connected Wallet</p>
-  //           <p className="text-xs text-accent truncate">{user?.wallet?.address}</p>
-  //           <button onClick={handleLogout} className="text-xs text-red-400 hover:text-red-300 mt-1">
-  //             Disconnect
-  //           </button>
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
-
   return (
-    <div className="min-h-screen">
-      <div className="flex min-h-screen bg-dark-gradient">
+    <AuthWrapper>
+      <div className="flex h-screen overflow-hidden bg-gradient-to-b from-[#011829] via-[#030f1c] to-black">
         {/* Sidebar */}
-        <motion.aside
-          initial={{ x: -200 }}
-          animate={{ x: 0 }}
-          className={`${
-            isSidebarOpen ? 'w-64' : 'w-20'
-          } glass-effect border-r border-white/5 p-4 transition-all duration-300 fixed h-screen`}
+        <div
+          className={`${isSidebarOpen ? 'w-64' : 'w-20'} flex-shrink-0 border-r border-white/5 transition-all duration-300 ease-in-out`}
         >
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between mb-8">
-              <Link href="/dashboard" className="text-gradient font-semibold text-xl">
-                Aiden
+          <div className="h-full flex flex-col py-4">
+            <div className="flex items-center justify-between px-4 mb-8">
+              <Link href="/dashboard" className="flex items-center">
+                <span className={`text-xl font-bold text-white ${!isSidebarOpen && 'hidden'}`}>
+                  Aiden
+                </span>
               </Link>
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 rounded-lg hover:bg-white/5 transition-colors"
+                className="p-2 rounded-lg hover:bg-white/5"
               >
                 <svg
-                  className="w-6 h-6 text-white/70"
+                  className="w-6 h-6 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -97,41 +52,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </button>
             </div>
 
-            <nav className="flex-1">
-              <ul className="space-y-2">
-                {navigation.map(item => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className={`flex items-center p-3 rounded-lg transition-all duration-200 ${
-                          isActive
-                            ? 'bg-[#87fafd]/10 text-accent'
-                            : 'text-white/70 hover:bg-white/5 hover:text-white'
-                        }`}
-                      >
-                        <item.icon className={`w-6 h-6 ${isSidebarOpen ? 'mr-3' : ''}`} />
-                        {isSidebarOpen && <span>{item.name}</span>}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+            <nav className="flex-1 space-y-1 px-2">
+              {navigation.map(item => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`${isActive ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'} flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out`}
+                  >
+                    <item.icon className="mr-3 flex-shrink-0 h-6 w-6" />
+                    {isSidebarOpen && <span>{item.name}</span>}
+                  </Link>
+                );
+              })}
             </nav>
-
-            <div className="mt-auto">
-              {/* <div className="glass-card p-4">{renderWalletSection()}</div> */}
-              <LoginButton />
-            </div>
           </div>
-        </motion.aside>
+        </div>
 
-        {/* Main Content */}
-        <main className={`flex-1 ${isSidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
-          <div className="p-8">{children}</div>
-        </main>
+        {/* Main content */}
+        <div className="flex-1 overflow-auto">
+          <div className="py-6 px-4 sm:px-6 lg:px-8">{children}</div>
+        </div>
       </div>
-    </div>
+    </AuthWrapper>
   );
 }
