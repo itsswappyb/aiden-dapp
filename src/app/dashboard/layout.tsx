@@ -3,8 +3,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChartBarIcon, CommandLineIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import {
+  ChartBarIcon,
+  CommandLineIcon,
+  DocumentIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import AuthWrapper from '@/components/auth/AuthWrapper';
+import { usePrivy, useSolanaWallets } from '@privy-io/react-auth';
+
+const formatWalletAddress = (address: string | undefined) => {
+  if (!address) return '';
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+};
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: ChartBarIcon },
@@ -15,6 +26,9 @@ const navigation = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { user, logout } = usePrivy();
+  const { wallets } = useSolanaWallets();
+  const solanaWallet = wallets[0]; // Get the first Solana wallet
 
   return (
     <AuthWrapper>
@@ -67,6 +81,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 );
               })}
             </nav>
+
+            {/* Wallet Section */}
+            <div className="px-2 py-4 border-t border-white/5">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-full bg-[#87fafd]/20 flex items-center justify-center flex-shrink-0">
+                  <UserGroupIcon className="w-4 h-4 text-[#87fafd]" />
+                </div>
+                {isSidebarOpen && (
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div>
+                      <p className="text-sm text-white/70">Connected Wallet</p>
+                      <p className="text-sm font-medium text-[#87fafd]">
+                        {formatWalletAddress(solanaWallet?.address)}
+                      </p>
+                    </div>
+                    <button
+                      onClick={logout}
+                      className="button-primary w-full bg-gradient-to-r from-red-500/20 to-red-500/10 
+                               border-red-500/30 hover:border-red-500/50 hover:bg-red-500/20
+                               focus:ring-red-500/50 text-sm py-1.5"
+                    >
+                      Disconnect
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
