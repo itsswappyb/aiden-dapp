@@ -19,7 +19,7 @@ import {
   // LinkedInLogoIcon,
 } from '@radix-ui/react-icons';
 import { useMutation, useQuery } from '@apollo/client';
-import { userIdAtom } from '@/components/LoginButton';
+import { userIdAtom } from '@/store/atoms';
 import { useAtom } from 'jotai';
 import { useToast } from '@/components/ui/ToastContext';
 import { usePrivy } from '@privy-io/react-auth';

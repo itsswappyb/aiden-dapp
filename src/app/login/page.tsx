@@ -4,27 +4,11 @@ import { usePrivy, useSolanaWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { userIdAtom } from '@/components/LoginButton';
+
+import { useMutation, useQuery } from '@apollo/client';
+import { userIdAtom } from '@/store/atoms';
 import { useAtom } from 'jotai';
-
-// Define the GraphQL mutation
-const INSERT_USER = gql`
-  mutation InsertUser($wallet_address: String!) {
-    insert_users_one(object: { wallet_address: $wallet_address }) {
-      id
-    }
-  }
-`;
-
-// Add the query to fetch user by wallet address
-const GET_USER = gql`
-  query GetUser($wallet_address: String!) {
-    users(where: { wallet_address: { _eq: $wallet_address } }) {
-      id
-    }
-  }
-`;
+import { GET_USER, INSERT_USER } from '@/graphql/queries/user';
 
 export default function LoginPage() {
   const { login, ready, authenticated } = usePrivy();
