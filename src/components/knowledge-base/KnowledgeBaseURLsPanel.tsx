@@ -67,7 +67,7 @@ export default function KnowledgeBaseURLsPanel({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-white/70">
-              Title
+              Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -82,7 +82,7 @@ export default function KnowledgeBaseURLsPanel({
           </div>
           <div>
             <label htmlFor="url" className="block text-sm font-medium text-white/70">
-              URL
+              URL <span className="text-red-500">*</span>
             </label>
             <input
               type="url"

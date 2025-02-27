@@ -212,10 +212,10 @@ export default function AgentsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8 flex justify-between items-center">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gradient">My Agents</h1>
-          <p className="text-white/70 mt-2">Manage and monitor your AI agents</p>
+          <h1 className="text-2xl font-semibold tracking-tight">My Agents</h1>
+          <p className="text-sm text-muted-foreground">Manage and monitor your AI agents</p>
         </div>
         <button
           onClick={() => {
