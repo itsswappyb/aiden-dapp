@@ -415,6 +415,8 @@ export default function AgentsPage() {
                         setIsLoading(true);
                         setError(null);
 
+                        console.log('formData', formData);
+
                         const { data: characterData } = await insertCharacter({
                           variables: {
                             character: formData,
