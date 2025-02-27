@@ -25,7 +25,8 @@ export function Providers({ children }: ProvidersProps) {
           appearance: {
             theme: 'dark',
             accentColor: '#87fafd',
-            logo: '/Aiden-logo.png',
+            // logo: '/Aiden-logo.png',
+            logo: 'https://6ryux3l5zi.ufs.sh/f/IKFZJ8jKgFp7GbEHVzCdIcbt4C3VuLxQwMHem26o85JnsBPS',
           },
           embeddedWallets: {
             solana: {
