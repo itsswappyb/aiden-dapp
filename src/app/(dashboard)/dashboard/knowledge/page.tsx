@@ -6,10 +6,10 @@ import KnowledgeBase from '@/components/knowledge-base/KnowledgeBase';
 export default function KnowledgePage() {
   return (
     <div className="space-y-8">
-      <div className="page-header">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="page-title">Knowledge Base</h1>
-          <p className="page-description">Manage and organize training data for your AI agents</p>
+          <h1 className="text-2xl font-bold text-gradient">Knowledge Base</h1>
+          <p className="text-white/70 mt-1">Manage and organize training data for your AI agents</p>
         </div>
       </div>
 
