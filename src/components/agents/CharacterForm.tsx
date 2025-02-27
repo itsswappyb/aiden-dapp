@@ -409,7 +409,7 @@ export function CharacterForm({
                 .join('\n') || ''
             }
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-              const lines = e.target.value.split('\n').filter(line => line.trim());
+              const lines = e.target.value.split('\n');
               const examples = lines.map(text => ({
                 user: 'user',
                 content: { text },
