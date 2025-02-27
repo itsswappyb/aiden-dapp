@@ -8,10 +8,8 @@ export default function KnowledgePage() {
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Knowledge Base</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage and organize training data for your AI agents
-          </p>
+          <h1 className="text-2xl font-bold text-gradient">Knowledge Base</h1>
+          <p className="text-white/70 mt-1">Manage and organize training data for your AI agents</p>
         </div>
       </div>
 
