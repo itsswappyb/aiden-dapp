@@ -23,10 +23,11 @@ export function Providers({ children }: ProvidersProps) {
         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
         config={{
           appearance: {
-            theme: 'dark',
+            theme: '#1a202c', // Using a dark background color
             accentColor: '#87fafd',
             // logo: '/Aiden-logo.png',
             logo: 'https://6ryux3l5zi.ufs.sh/f/IKFZJ8jKgFp7GbEHVzCdIcbt4C3VuLxQwMHem26o85JnsBPS',
+            showWalletLoginFirst: false, // Show email login first
           },
           embeddedWallets: {
             solana: {
