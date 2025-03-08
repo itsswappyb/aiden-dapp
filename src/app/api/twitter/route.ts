@@ -30,7 +30,7 @@ async function initializeAgent(
     // Verify write access by attempting to post a test tweet with unique content
     try {
       const timestamp = new Date().toISOString();
-      const testTweet = await nativeTwitterClient.post(`Testing Twitter API access [${timestamp}]`);
+      const testTweet = await nativeTwitterClient.post(`Verifying agent connection [${timestamp}]`);
       console.log('Successfully verified write access:', testTweet);
     } catch (writeError) {
       console.error('Failed to verify write access:', writeError);
