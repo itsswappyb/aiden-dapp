@@ -125,12 +125,13 @@ async function initializeAgent(apiKey: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { apiKey, runDuration = 60 } = body;
-
+    const apiKey = process.env.GAME_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'API key is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Twitter agent API key not configured' }, { status: 500 });
     }
+
+    const body = await request.json();
+    const { runDuration = 60 } = body;
 
     const agent = await initializeAgent(apiKey);
     await agent.run(runDuration, { verbose: true });
