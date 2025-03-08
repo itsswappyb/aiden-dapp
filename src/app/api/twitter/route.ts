@@ -27,22 +27,31 @@ async function initializeAgent(
     const userInfo = await nativeTwitterClient.me();
     console.log('Successfully verified read access, user info:', userInfo);
 
-    // Verify write access by attempting to post a test tweet
+    // Verify write access by attempting to post a test tweet with unique content
     try {
-      const testTweet = await nativeTwitterClient.post('Test tweet - will be deleted');
+      const timestamp = new Date().toISOString();
+      const testTweet = await nativeTwitterClient.post(`Testing Twitter API access [${timestamp}]`);
       console.log('Successfully verified write access:', testTweet);
-
-      // Delete the test tweet
-      try {
-        // Note: You'll need to implement tweet deletion if available in your Twitter client
-        // await nativeTwitterClient.delete(testTweet.data.id);
-      } catch (deleteError) {
-        console.log('Could not delete test tweet, but write access is confirmed');
-      }
     } catch (writeError) {
       console.error('Failed to verify write access:', writeError);
+
+      // Check for specific error types
+      if (writeError instanceof Error) {
+        const errorMessage = writeError.message.toLowerCase();
+        if (errorMessage.includes('duplicate content')) {
+          throw new Error(
+            'Twitter API rate limit or duplicate content error. Please try again in a moment.'
+          );
+        } else if (errorMessage.includes('forbidden')) {
+          throw new Error(
+            'Twitter API write access forbidden. Please check your app permissions in the Twitter Developer Portal.'
+          );
+        }
+      }
+
       throw new Error(
-        'Twitter credentials lack write permissions. Please ensure your app has write access enabled.'
+        'Failed to verify Twitter write access. ' +
+          (writeError instanceof Error ? writeError.message : String(writeError))
       );
     }
 
