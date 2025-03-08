@@ -1,127 +1,50 @@
-import {
-  ExecutableGameFunctionResponse,
-  ExecutableGameFunctionStatus,
-  GameAgent,
-  GameFunction,
-  GameWorker,
-  LLMModel,
-} from '@virtuals-protocol/game';
+import { GameAgent } from '@virtuals-protocol/game';
+import TwitterPlugin, { TwitterClient } from '@virtuals-protocol/game-twitter-plugin';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Define the game functions
-const postTweetFunction = new GameFunction({
-  name: 'post_tweet',
-  description: 'Post a tweet',
-  args: [
-    { name: 'tweet', description: 'The tweet content' },
-    { name: 'tweet_reasoning', description: 'The reasoning behind the tweet' },
-  ] as const,
-  executable: async (args, logger) => {
-    try {
-      // TODO: Implement posting tweet
-
-      logger(`Posting tweet: ${args.tweet}`);
-      logger(`Reasoning: ${args.tweet_reasoning}`);
-
-      return new ExecutableGameFunctionResponse(ExecutableGameFunctionStatus.Done, 'Tweet posted');
-    } catch (e) {
-      return new ExecutableGameFunctionResponse(
-        ExecutableGameFunctionStatus.Failed,
-        'Failed to post tweet'
-      );
-    }
-  },
-});
-
-const searchTweetsFunction = new GameFunction({
-  name: 'search_tweets',
-  description: 'Search tweets and return results',
-  args: [
-    { name: 'query', description: 'The query to search for' },
-    { name: 'reasoning', description: 'The reasoning behind the search' },
-  ] as const,
-  executable: async (args, logger) => {
-    try {
-      const query = args.query;
-
-      //TODO: Implement searching tweets
-      logger(`Searching tweets for query: ${query}`);
-
-      return new ExecutableGameFunctionResponse(
-        ExecutableGameFunctionStatus.Done,
-        "Tweets searched here are the results: [{tweetId: 1, content: 'Hello World'}, {tweetId: 2, content: 'Goodbye World'}]"
-      );
-    } catch (e) {
-      return new ExecutableGameFunctionResponse(
-        ExecutableGameFunctionStatus.Failed,
-        'Failed to search tweets'
-      );
-    }
-  },
-});
-
-const replyToTweetFunction = new GameFunction({
-  name: 'reply_to_tweet',
-  description: 'Reply to a tweet',
-  args: [
-    { name: 'tweet_id', description: 'The tweet id to reply to' },
-    { name: 'reply', description: 'The reply content' },
-  ] as const,
-  executable: async (args, logger) => {
-    try {
-      const tweetId = args.tweet_id;
-      const reply = args.reply;
-
-      //TODO: Implement replying to tweet
-      logger(`Replying to tweet ${tweetId} with ${reply}`);
-
-      return new ExecutableGameFunctionResponse(
-        ExecutableGameFunctionStatus.Done,
-        `Replied to tweet ${tweetId} with ${reply}`
-      );
-    } catch (e) {
-      return new ExecutableGameFunctionResponse(
-        ExecutableGameFunctionStatus.Failed,
-        'Failed to reply to tweet'
-      );
-    }
-  },
-});
-
-// Create a worker with the functions
-const postTweetWorker = new GameWorker({
-  id: 'twitter_main_worker',
-  name: 'Twitter main worker',
-  description: 'Worker that posts tweets',
-  functions: [searchTweetsFunction, replyToTweetFunction, postTweetFunction],
-  getEnvironment: async () => {
-    return {
-      tweet_limit: 15,
-    };
-  },
-});
-
 // Initialize agent function
-async function initializeAgent(apiKey: string) {
+async function initializeAgent(
+  apiKey: string,
+  twitterConfig: {
+    apiKey: string;
+    apiSecretKey: string;
+    accessToken: string;
+    accessTokenSecret: string;
+  }
+) {
+  // Initialize the native Twitter client with the provided credentials
+  const nativeTwitterClient = new TwitterClient({
+    apiKey: twitterConfig.apiKey,
+    apiSecretKey: twitterConfig.apiSecretKey,
+    accessToken: twitterConfig.accessToken,
+    accessTokenSecret: twitterConfig.accessTokenSecret,
+  });
+
+  // Create the Twitter plugin
+  const twitterPlugin = new TwitterPlugin({
+    id: 'twitter_worker',
+    name: 'Twitter Worker',
+    description:
+      'A worker that will execute tasks within the Twitter Social Platform. It is capable of posting, replying, quoting and liking tweets.',
+    twitterClient: nativeTwitterClient,
+  });
+
+  // Create an agent with the worker
   const agent = new GameAgent(apiKey, {
     name: 'Twitter Bot',
-    goal: 'Search and reply to tweets',
-    description: 'A bot that searches for tweets and replies to them',
-    workers: [postTweetWorker],
-    llmModel: LLMModel.DeepSeek_R1,
-    getAgentState: async () => {
-      return {
-        username: 'twitter_bot',
-        follower_count: 1000,
-        tweet_count: 10,
-      };
-    },
+    goal: 'increase engagement and grow follower count',
+    description: 'A bot that can post tweets, reply to tweets, and like tweets',
+    workers: [
+      twitterPlugin.getWorker({
+        // Using default functions and metrics from the plugin
+      }),
+    ],
   });
 
   // Set custom logger
-  agent.setLogger((agent, msg) => {
+  agent.setLogger((agent, message) => {
     console.log(`-----[${agent.name}]-----`);
-    console.log(msg);
+    console.log(message);
     console.log('\n');
   });
 
@@ -133,13 +56,30 @@ export async function POST(request: NextRequest) {
   try {
     const apiKey = process.env.GAME_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'Twitter agent API key not configured' }, { status: 500 });
+      return NextResponse.json({ error: 'Game API key not configured' }, { status: 500 });
     }
 
     const body = await request.json();
-    const { runDuration = 60 } = body;
+    const {
+      runDuration = 60,
+      twitterApiKey,
+      twitterApiSecret,
+      twitterAccessToken,
+      twitterAccessSecret,
+    } = body;
 
-    const agent = await initializeAgent(apiKey);
+    // Validate Twitter credentials
+    if (!twitterApiKey || !twitterApiSecret || !twitterAccessToken || !twitterAccessSecret) {
+      return NextResponse.json({ error: 'Twitter credentials are required' }, { status: 400 });
+    }
+
+    const agent = await initializeAgent(apiKey, {
+      apiKey: twitterApiKey,
+      apiSecretKey: twitterApiSecret,
+      accessToken: twitterAccessToken,
+      accessTokenSecret: twitterAccessSecret,
+    });
+
     await agent.run(runDuration, { verbose: true });
 
     return NextResponse.json({

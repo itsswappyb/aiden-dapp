@@ -5,16 +5,32 @@ import { TwitterLogoIcon } from '@radix-ui/react-icons';
 import { RocketLaunchIcon } from '@heroicons/react/24/outline';
 
 interface CreateAgentFormProps {
-  onFormSubmit: (formData: { runDuration: number }) => Promise<void>;
+  onFormSubmit: (formData: {
+    runDuration: number;
+    twitterApiKey: string;
+    twitterApiSecret: string;
+    twitterAccessToken: string;
+    twitterAccessSecret: string;
+  }) => Promise<void>;
   isLoading: boolean;
 }
 
 export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProps) {
   const [runDuration, setRunDuration] = useState(60);
+  const [twitterApiKey, setTwitterApiKey] = useState('');
+  const [twitterApiSecret, setTwitterApiSecret] = useState('');
+  const [twitterAccessToken, setTwitterAccessToken] = useState('');
+  const [twitterAccessSecret, setTwitterAccessSecret] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onFormSubmit({ runDuration });
+    await onFormSubmit({
+      runDuration,
+      twitterApiKey,
+      twitterApiSecret,
+      twitterAccessToken,
+      twitterAccessSecret,
+    });
   };
 
   return (
@@ -30,6 +46,71 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
       </div>
 
       <div className="space-y-4">
+        <div>
+          <label htmlFor="twitterApiKey" className="block text-sm font-medium text-gray-200 mb-1">
+            Twitter API Key
+          </label>
+          <input
+            type="password"
+            id="twitterApiKey"
+            value={twitterApiKey}
+            onChange={e => setTwitterApiKey(e.target.value)}
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="twitterApiSecret"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
+            Twitter API Secret
+          </label>
+          <input
+            type="password"
+            id="twitterApiSecret"
+            value={twitterApiSecret}
+            onChange={e => setTwitterApiSecret(e.target.value)}
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="twitterAccessToken"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
+            Twitter Access Token
+          </label>
+          <input
+            type="password"
+            id="twitterAccessToken"
+            value={twitterAccessToken}
+            onChange={e => setTwitterAccessToken(e.target.value)}
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="twitterAccessSecret"
+            className="block text-sm font-medium text-gray-200 mb-1"
+          >
+            Twitter Access Token Secret
+          </label>
+          <input
+            type="password"
+            id="twitterAccessSecret"
+            value={twitterAccessSecret}
+            onChange={e => setTwitterAccessSecret(e.target.value)}
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
         <div>
           <label htmlFor="runDuration" className="block text-sm font-medium text-gray-200 mb-1">
             Run Duration (seconds)
