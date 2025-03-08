@@ -36,6 +36,7 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
     checkPaymentStatus();
   }, [checkPaymentStatus]);
 
+  // token gated deployment
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
