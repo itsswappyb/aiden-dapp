@@ -6,6 +6,7 @@ import { client } from '@/lib/apollo-client';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 import { ToastProvider } from '@/components/ui/ToastContext';
 import { Provider as JotaiProvider } from 'jotai';
+import { mantleSepoliaTestnet } from 'viem/chains';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -22,21 +23,14 @@ export function Providers({ children }: ProvidersProps) {
       <PrivyProvider
         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
         config={{
+          loginMethods: ['email', 'wallet'],
           appearance: {
-            theme: '#1a202c', // Using a dark background color
-            accentColor: '#87fafd',
-            // logo: '/Aiden-logo.png',
-            logo: 'https://6ryux3l5zi.ufs.sh/f/IKFZJ8jKgFp7GbEHVzCdIcbt4C3VuLxQwMHem26o85JnsBPS',
-            showWalletLoginFirst: false, // Show email login first
+            theme: 'light',
+            accentColor: '#676FFF',
+            showWalletLoginFirst: true,
           },
-          embeddedWallets: {
-            solana: {
-              createOnLogin: 'all-users',
-            },
-            ethereum: {
-              createOnLogin: 'all-users', // defaults to 'off'
-            },
-          },
+          supportedChains: [mantleSepoliaTestnet],
+          defaultChain: mantleSepoliaTestnet,
         }}
       >
         <ApolloProvider client={client}>
