@@ -1,6 +1,10 @@
+'use client';
+
+import { useState } from 'react';
 import { useAgentDeployment } from '@/hooks/useAgentDeployment';
 
 export default function TwitterForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const { isPaid, isLoading: isPaymentLoading, payDeploymentFee } = useAgentDeployment();
 
   const handleDeploy = async () => {
@@ -12,7 +16,15 @@ export default function TwitterForm() {
         return;
       }
     }
-    // Existing deployment logic...
+
+    setIsLoading(true);
+    try {
+      // Existing deployment logic...
+    } catch (error) {
+      console.error('Deployment failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
