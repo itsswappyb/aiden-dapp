@@ -1,6 +1,6 @@
 'use client';
 
-import { usePrivy, useSolanaWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Image from 'next/image';
@@ -13,8 +13,7 @@ import { GET_USER, INSERT_USER } from '@/graphql/queries/user';
 export default function LoginPage() {
   const { login, ready, authenticated } = usePrivy();
   const router = useRouter();
-  const { wallets } = useSolanaWallets();
-  const solanaWallet = wallets[0];
+  const { wallets } = useWallets();
   const [, setUserId] = useAtom(userIdAtom);
 
   // Add the mutation hook
@@ -27,9 +26,25 @@ export default function LoginPage() {
   });
 
   // Handle user authentication and wallet setup
-  const saveUser = async (walletAddress: string) => {
+  const saveUser = async () => {
     try {
-      // First try to fetch existing user
+      if (!wallets || wallets.length === 0) return;
+      const wallet = wallets[0];
+
+      // First get the wallet address
+      const walletAddress = wallet.address;
+      console.log('walletAddress', walletAddress);
+      if (!walletAddress) return;
+
+      // Then try to switch chain
+      try {
+        await wallet.switchChain(5003);
+      } catch (error) {
+        console.error('Error switching chain:', error);
+        return;
+      }
+
+      // Try to fetch existing user
       const { data: existingUser } = await refetchUser({
         wallet_address: walletAddress,
       });
@@ -57,12 +72,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (ready && authenticated) {
-      if (solanaWallet?.address) {
-        saveUser(solanaWallet.address);
-      }
+      saveUser();
       router.push('/dashboard');
     }
-  }, [ready, authenticated, router, solanaWallet?.address]);
+  }, [ready, authenticated, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#011829] via-[#030f1c] to-black">

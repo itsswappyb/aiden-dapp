@@ -48,8 +48,8 @@ async function initializeAgent(
 
     // Create the Twitter plugin
     const twitterPlugin = new TwitterPlugin({
-      id: 'twitter_worker',
-      name: 'Twitter Worker',
+      id: 'lyft-twitter_worker',
+      name: 'Lyf Twitter Worker',
       description:
         'A worker that will execute tasks within the Twitter Social Platform. It is capable of posting, replying, quoting and liking tweets.',
       twitterClient: nativeTwitterClient,

@@ -10,7 +10,7 @@ import {
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 
-import { usePrivy, useSolanaWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useUser } from '@/hooks/useUser';
 
 const formatWalletAddress = (address: string | undefined) => {
@@ -29,9 +29,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { user, logout, ready, authenticated } = usePrivy();
-  const { wallets } = useSolanaWallets();
-  const solanaWallet = wallets[0]; // Get the first Solana wallet
+  const { wallets } = useWallets();
   const { userId, loading: userLoading } = useUser();
+  const [walletAddress, setWalletAddress] = useState('');
+
+  useEffect(() => {
+    const setupWallet = async () => {
+      if (!wallets || wallets.length === 0) {
+        setWalletAddress('');
+        return;
+      }
+      const wallet = wallets[0];
+      try {
+        await wallet.switchChain(5003);
+        setWalletAddress(wallet.address || '');
+      } catch (error) {
+        console.error('Error switching chain:', error);
+        setWalletAddress('');
+      }
+    };
+
+    setupWallet();
+  }, [wallets]);
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -111,7 +130,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <div>
                     <p className="text-sm text-white/70">Connected Wallet</p>
                     <p className="text-sm font-medium text-[#87fafd]">
-                      {formatWalletAddress(solanaWallet?.address)}
+                      {formatWalletAddress(walletAddress)}
                     </p>
                   </div>
                   <button

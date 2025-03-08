@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TwitterLogoIcon } from '@radix-ui/react-icons';
 import { RocketLaunchIcon } from '@heroicons/react/24/outline';
+import { useAgentDeployment } from '@/hooks/useAgentDeployment';
 
 interface CreateAgentFormProps {
   onFormSubmit: (formData: {
@@ -16,21 +17,38 @@ interface CreateAgentFormProps {
 }
 
 export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProps) {
-  const [runDuration, setRunDuration] = useState(60);
-  const [twitterApiKey, setTwitterApiKey] = useState('');
-  const [twitterApiSecret, setTwitterApiSecret] = useState('');
-  const [twitterAccessToken, setTwitterAccessToken] = useState('');
-  const [twitterAccessSecret, setTwitterAccessSecret] = useState('');
+  const {
+    isPaid,
+    isLoading: isPaymentLoading,
+    payDeploymentFee,
+    checkPaymentStatus,
+  } = useAgentDeployment();
+  const [formData, setFormData] = useState({
+    runDuration: 60,
+    twitterApiKey: '',
+    twitterApiSecret: '',
+    twitterAccessToken: '',
+    twitterAccessSecret: '',
+  });
+
+  // Check payment status on mount
+  useEffect(() => {
+    checkPaymentStatus();
+  }, [checkPaymentStatus]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onFormSubmit({
-      runDuration,
-      twitterApiKey,
-      twitterApiSecret,
-      twitterAccessToken,
-      twitterAccessSecret,
-    });
+
+    if (!isPaid) {
+      try {
+        await payDeploymentFee();
+      } catch (error) {
+        console.error('Payment failed:', error);
+        return;
+      }
+    }
+
+    await onFormSubmit(formData);
   };
 
   return (
@@ -53,8 +71,8 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
           <input
             type="password"
             id="twitterApiKey"
-            value={twitterApiKey}
-            onChange={e => setTwitterApiKey(e.target.value)}
+            value={formData.twitterApiKey}
+            onChange={e => setFormData({ ...formData, twitterApiKey: e.target.value })}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -70,8 +88,8 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
           <input
             type="password"
             id="twitterApiSecret"
-            value={twitterApiSecret}
-            onChange={e => setTwitterApiSecret(e.target.value)}
+            value={formData.twitterApiSecret}
+            onChange={e => setFormData({ ...formData, twitterApiSecret: e.target.value })}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -87,8 +105,8 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
           <input
             type="password"
             id="twitterAccessToken"
-            value={twitterAccessToken}
-            onChange={e => setTwitterAccessToken(e.target.value)}
+            value={formData.twitterAccessToken}
+            onChange={e => setFormData({ ...formData, twitterAccessToken: e.target.value })}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -104,8 +122,8 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
           <input
             type="password"
             id="twitterAccessSecret"
-            value={twitterAccessSecret}
-            onChange={e => setTwitterAccessSecret(e.target.value)}
+            value={formData.twitterAccessSecret}
+            onChange={e => setFormData({ ...formData, twitterAccessSecret: e.target.value })}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -118,8 +136,8 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
           <input
             type="number"
             id="runDuration"
-            value={runDuration}
-            onChange={e => setRunDuration(Number(e.target.value))}
+            value={formData.runDuration}
+            onChange={e => setFormData({ ...formData, runDuration: Number(e.target.value) })}
             min={1}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -129,43 +147,83 @@ export function CreateAgentForm({ onFormSubmit, isLoading }: CreateAgentFormProp
         </div>
       </div>
 
-      <div className="flex justify-end space-x-3">
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="button-primary flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? (
-            <>
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Deploying...
-            </>
+      <div className="flex flex-col space-y-4">
+        <div className="flex justify-end space-x-3">
+          <button
+            type="submit"
+            disabled={isLoading || isPaymentLoading}
+            className="button-primary flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isPaymentLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Paying Fee...
+              </>
+            ) : isLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Deploying...
+              </>
+            ) : (
+              <>
+                <RocketLaunchIcon className="w-5 h-5 mr-2" />
+                {isPaid ? 'Deploy Agent' : 'Pay & Deploy Agent'}
+              </>
+            )}
+          </button>
+        </div>
+
+        <div className="text-sm text-gray-400">
+          {!isPaid ? (
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-500">⚠️</span>
+              <span>Deployment requires a payment of 1 MNT</span>
+            </div>
           ) : (
-            <>
-              <RocketLaunchIcon className="w-5 h-5 mr-2" />
-              Deploy Agent
-            </>
+            <div className="flex items-center gap-2">
+              <span className="text-green-500">✓</span>
+              <span>Payment completed - ready to deploy</span>
+            </div>
           )}
-        </button>
+        </div>
       </div>
     </form>
   );
