@@ -6,6 +6,10 @@ A modern decentralized application for managing autonomous AI agents for Web3 co
 
 Aiden provides an intelligence layer that empowers Web3 communities with autonomous AI agents, trained to manage, engage, and grow your ecosystem. The platform enables seamless integration of AI agents across various platforms including Telegram, Discord, and X (Twitter).
 
+## Mantle Sepolia Testnet
+
+- Contract Address: 0x8Af222233c2B093BF2EFdaDf4052510Cbca92634
+
 ## Technology Stack
 
 - Next.js 14
