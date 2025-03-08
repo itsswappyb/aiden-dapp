@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CharacterForm } from '@/components/agents/CharacterForm';
+import { CreateAgentForm } from '@/components/agents/CreateAgentForm';
 import {
   PlusIcon,
   ChatBubbleLeftRightIcon,
@@ -406,47 +406,43 @@ export default function AgentsPage() {
                   {error}
                 </div>
               )}
-              <div>
-                <h3 className="text-lg font-medium text-white mb-4">Create Character</h3>
-                <div className="rounded-lg">
-                  <CharacterForm
-                    onFormSubmit={async formData => {
-                      try {
-                        setIsLoading(true);
-                        setError(null);
+              <div className="rounded-lg">
+                <CreateAgentForm
+                  isLoading={isLoading}
+                  onFormSubmit={async formData => {
+                    try {
+                      setIsLoading(true);
+                      setError(null);
 
-                        console.log('formData', formData);
+                      const response = await fetch('/api/twitter', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          runDuration: formData.runDuration,
+                        }),
+                      });
 
-                        const { data: characterData } = await insertCharacter({
-                          variables: {
-                            character: formData,
-                            isActive: false,
-                            userId: userId,
-                            agentId: null,
-                          },
-                        });
+                      const data = await response.json();
 
-                        if (!characterData?.insert_characters_one?.id) {
-                          throw new Error('Failed to create character: No ID returned');
-                        }
-
-                        showToast('Character created successfully!', 'success');
-                        await refetchCharacters();
-                        setShowDeployModal(false);
-                        return characterData;
-                      } catch (error) {
-                        const errorMessage =
-                          error instanceof Error ? error.message : 'Failed to create character';
-                        console.error('Error creating character:', error);
-                        setError(errorMessage);
-                        showToast(errorMessage, 'error');
-                        throw error;
-                      } finally {
-                        setIsLoading(false);
+                      if (!response.ok) {
+                        throw new Error(data.error || 'Failed to deploy Twitter agent');
                       }
-                    }}
-                  />
-                </div>
+
+                      showToast('Twitter agent deployed successfully!', 'success');
+                      setShowDeployModal(false);
+                    } catch (error) {
+                      const errorMessage =
+                        error instanceof Error ? error.message : 'Failed to deploy Twitter agent';
+                      console.error('Error deploying Twitter agent:', error);
+                      setError(errorMessage);
+                      showToast(errorMessage, 'error');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                />
               </div>
               {/* <div className="flex justify-end space-x-3">
                 <button onClick={() => setShowDeployModal(false)} className="button-secondary">

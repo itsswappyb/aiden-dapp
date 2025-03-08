@@ -18,6 +18,8 @@ const postTweetFunction = new GameFunction({
   ] as const,
   executable: async (args, logger) => {
     try {
+      // TODO: Implement posting tweet
+
       logger(`Posting tweet: ${args.tweet}`);
       logger(`Reasoning: ${args.tweet_reasoning}`);
 
@@ -41,6 +43,8 @@ const searchTweetsFunction = new GameFunction({
   executable: async (args, logger) => {
     try {
       const query = args.query;
+
+      //TODO: Implement searching tweets
       logger(`Searching tweets for query: ${query}`);
 
       return new ExecutableGameFunctionResponse(
@@ -67,6 +71,8 @@ const replyToTweetFunction = new GameFunction({
     try {
       const tweetId = args.tweet_id;
       const reply = args.reply;
+
+      //TODO: Implement replying to tweet
       logger(`Replying to tweet ${tweetId} with ${reply}`);
 
       return new ExecutableGameFunctionResponse(
