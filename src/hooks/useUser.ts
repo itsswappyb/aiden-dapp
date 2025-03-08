@@ -27,6 +27,7 @@ export function useUser() {
       const wallet = wallets[0];
       try {
         await wallet.switchChain(5003);
+        console.log('walletAddress', wallet.address);
         setWalletAddress(wallet.address);
       } catch (error) {
         console.error('Error switching chain:', error);

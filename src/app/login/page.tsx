@@ -33,6 +33,7 @@ export default function LoginPage() {
 
       // First get the wallet address
       const walletAddress = wallet.address;
+      console.log('walletAddress', walletAddress);
       if (!walletAddress) return;
 
       // Then try to switch chain
