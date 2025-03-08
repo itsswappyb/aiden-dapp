@@ -414,6 +414,15 @@ export default function AgentsPage() {
                       setIsLoading(true);
                       setError(null);
 
+                      // Debug log
+                      console.log('Form data being sent:', {
+                        runDuration: formData.runDuration,
+                        twitterApiKey: formData.twitterApiKey,
+                        twitterApiSecret: formData.twitterApiSecret,
+                        twitterAccessToken: formData.twitterAccessToken,
+                        twitterAccessSecret: formData.twitterAccessSecret,
+                      });
+
                       const response = await fetch('/api/twitter', {
                         method: 'POST',
                         headers: {
@@ -421,10 +430,15 @@ export default function AgentsPage() {
                         },
                         body: JSON.stringify({
                           runDuration: formData.runDuration,
+                          twitterApiKey: formData.twitterApiKey,
+                          twitterApiSecret: formData.twitterApiSecret,
+                          twitterAccessToken: formData.twitterAccessToken,
+                          twitterAccessSecret: formData.twitterAccessSecret,
                         }),
                       });
 
                       const data = await response.json();
+                      console.log('API Response:', { status: response.status, data });
 
                       if (!response.ok) {
                         throw new Error(data.error || 'Failed to deploy Twitter agent');
