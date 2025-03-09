@@ -2,6 +2,8 @@ import { GameAgent } from '@virtuals-protocol/game';
 import TwitterPlugin, { TwitterClient } from '@virtuals-protocol/game-twitter-plugin';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const maxDuration = 300;
+
 // Initialize agent function
 async function initializeAgent(
   apiKey: string,
