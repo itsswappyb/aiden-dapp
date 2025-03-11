@@ -10,8 +10,17 @@ const Navbar = () => {
   return (
     <nav className="glass-effect fixed w-full z-50 top-0 left-0 border-b border-white/5">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <Link href="/" className="flex items-center space-x-3">
-          <span className="self-center text-2xl font-semibold text-gradient">Aiden</span>
+        <Link href="/" className="flex items-center space-x-5">
+          <Image
+            src="https://raw.githubusercontent.com/itsswappyb/aiden-dapp/main/public/aiden-fox.png"
+            alt="Aiden Fox Logo"
+            width={30}
+            height={30}
+            className="h-8 w-auto"
+          />
+          <span className="self-center text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#87fafd]">
+            Aiden
+          </span>
         </Link>
 
         <button

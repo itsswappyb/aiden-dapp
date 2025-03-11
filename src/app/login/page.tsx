@@ -83,7 +83,7 @@ export default function LoginPage() {
         <div className="text-center space-y-6">
           <div className="relative w-24 h-24 mx-auto">
             <Image
-              src="/aiden-logo.png"
+              src="https://raw.githubusercontent.com/itsswappyb/aiden-dapp/main/public/aiden-logo.png"
               alt="Aiden Logo"
               fill
               className="object-contain"

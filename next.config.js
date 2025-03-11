@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@tremor/react'],
   images: {
-    domains: ['github.com'], // Add any other domains you need for images
+    domains: ['github.com', 'raw.githubusercontent.com'], // Added GitHub raw content domain
   },
   async rewrites() {
     return [

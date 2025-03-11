@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.11.11] - 2024-03-11
+
+### Fixed
+
+- Fixed logo display in production by using hosted image URLs instead of local paths
+- Updated Next.js image configuration to support GitHub hosted images
+- Improved image loading reliability across all environments
+- Ensured consistent branding across development and production
+
 ## [0.11.10] - 2024-03-11
 
 ### Added
