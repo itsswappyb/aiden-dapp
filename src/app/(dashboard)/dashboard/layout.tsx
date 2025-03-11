@@ -23,6 +23,7 @@ const navigation = [
   { name: 'Overview', href: '/dashboard', icon: ChartBarIcon },
   { name: 'My Agents', href: '/dashboard/agents', icon: CommandLineIcon },
   { name: 'Knowledge Base', href: '/dashboard/knowledge', icon: DocumentIcon },
+  { name: 'Community Analytics', href: '/dashboard/community', icon: UserGroupIcon },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

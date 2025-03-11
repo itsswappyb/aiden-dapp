@@ -1,5 +1,131 @@
 # Changelog
 
+## [0.11.21] - 2024-03-11
+
+### Changed
+
+- Enhanced key metrics cards with more prominent numerical values
+- Standardized stat card layouts for consistent information presentation
+- Improved overall information hierarchy to emphasize important metrics
+- Optimized card structure for better readability and visual alignment
+- Reorganized stat cards with consistent spacing and text positioning
+
+## [0.11.20] - 2024-03-11
+
+### Changed
+
+- Softened the stroke lines on area charts for a more subtle visual effect
+- Reduced opacity of chart borders to create a more cohesive visual style
+- Decreased the size and brightness of data point indicators
+- Made legend indicators match the softer color scheme
+- Improved overall visual consistency between heatmap and area charts
+
+## [0.11.19] - 2024-03-11
+
+### Changed
+
+- Replaced bar chart in Hourly Activity section with a heatmap visualization
+- Added day-of-week dimension to activity analysis for better pattern recognition
+- Implemented color intensity scale to represent message volume more intuitively
+- Enhanced data visualization with improved tooltips showing detailed activity metrics
+- Added color scale legend for better interpretation of the heatmap
+
+## [0.11.18] - 2024-03-11
+
+### Changed
+
+- Completely redesigned chart layouts for a more professional appearance
+- Improved grid line presentation with consistent sizing and spacing
+- Repositioned chart legends to the bottom right with better visibility
+- Added custom backgrounds to legends for improved readability
+- Enhanced data point indicators for better visual tracking
+- Updated gradient opacities for more balanced chart visuals
+- Improved spacing and alignment of axis labels
+- Standardized positioning of contextual information across all charts
+- Increased chart height for better data visualization
+
+## [0.11.17] - 2024-03-11
+
+### Fixed
+
+- Improved consistency of stat cards by enforcing uniform height
+- Fixed chart legend overlap issues by repositioning and adding background for better readability
+- Enhanced platform performance cards with improved background and hover effects
+- Adjusted spacing and margins for more consistent layout across all components
+- Improved overall visual hierarchy and readability of dashboard elements
+
+## [0.11.16] - 2024-03-11
+
+### Added
+
+- Implemented a consistent color system for all chart visualizations
+- Added a centralized CHART_COLORS object for better maintainability of the color palette
+- Added reference lines to charts for contextual comparison
+- Implemented dynamic opacity based on data values for better visual hierarchy
+- Added target reference lines to support data context
+
+### Changed
+
+- Updated all charts to use the application's accent color theme (#87fafd)
+- Improved chart visibility and readability on dark backgrounds
+- Enhanced color contrast for all chart elements based on data visualization best practices
+- Applied consistent color semantics (positive/neutral/negative) across all charts
+- Refined tooltips for better data context and readability
+
+### Fixed
+
+- Fixed inconsistent color application across different chart types
+- Addressed visual hierarchy issues in data presentation
+- Improved color accessibility in all data visualizations
+- Fixed color consistency between legends and chart elements
+
+## [0.11.15] - 2024-03-11
+
+### Fixed
+
+- Completely replaced Tremor chart components with custom-built chart elements to fix visibility issues
+- Created custom SVG-based area charts, line charts, and bar charts with vivid colors
+- Implemented custom donut chart with direct color application to ensure proper display in dark mode
+- Added custom progress bars for platform performance metrics with better visibility
+- Ensured consistent colors across all chart elements with direct application of CSS
+- Enhanced tooltips and legends for better user experience
+- Fixed all chart display issues on dark backgrounds
+
+## [0.11.14] - 2024-03-11
+
+### Fixed
+
+- Fixed chart visibility issues on dark backgrounds by enhancing CSS for Tremor charts
+- Added CSS overrides to make bar charts, pie charts, and area charts more visible
+- Improved color contrast for all chart elements in dark mode
+- Enhanced DonutChart with better styling and larger color indicators
+- Added additional context to charts with improved legends and annotations
+- Fixed New Members chart with more vibrant colors and grid improvements
+
+## [0.11.13] - 2024-03-11
+
+### Added
+
+- Completely redesigned Community Analytics page with modern UI
+- Added interactive time period filters (7d, 30d, 90d)
+- Added tabbed chart sections for growth, retention, and new members
+- Implemented detailed platform performance metrics with visual indicators
+- Added hourly activity chart to track message volume patterns
+- Added trending topics section with sentiment analysis
+- Added real-time activity feed with platform-specific styling
+- Enhanced statistics cards with additional metrics
+- Added proper mobile responsiveness throughout the analytics page
+
+### Changed
+
+- Made the existing Community Analytics page accessible through the main sidebar navigation
+- Updated visualization components with improved styling and interactivity
+- **Improved chart colors and customization for better visibility on dark backgrounds**
+- **Added custom tooltips to all charts for enhanced data readability**
+- **Implemented consistent color scheme across all platform-specific elements**
+- Enhanced data presentation with more intuitive visual hierarchy
+- Improved overall user experience with cleaner interface and better information organization
+
 ## [0.11.12] - 2024-03-11
 
 ### Fixed

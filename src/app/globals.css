@@ -111,3 +111,70 @@
 .tremor-Text-root {
   @apply text-white/90 !important;
 }
+
+/* Enhanced Tremor Chart Visibility for Dark Mode */
+/* Make chart colors more vivid and visible */
+.tremor-AreaChart-area {
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
+}
+
+.tremor-BarChart-bar {
+  opacity: 1 !important;
+}
+
+.tremor-DonutChart-slice {
+  opacity: 1 !important;
+  stroke: #fff !important;
+  stroke-width: 2px !important;
+}
+
+.tremor-LineChart-line {
+  stroke-width: 4px !important;
+}
+
+/* Enhance grid and axis visibility */
+.tremor-AreaChart-tick text,
+.tremor-BarChart-tick text,
+.tremor-LineChart-tick text {
+  fill: #fff !important;
+}
+
+.tremor-AreaChart-gridLine,
+.tremor-BarChart-gridLine,
+.tremor-LineChart-gridLine {
+  stroke: #fff !important;
+}
+
+/* Specific color enhancements */
+.tremor-AreaChart path[fill^='rgb(59,130,246)'],
+.tremor-LineChart path[stroke^='rgb(59,130,246)'] {
+  fill: #5b93fa !important;
+  stroke: #5b93fa !important;
+}
+
+.tremor-AreaChart path[fill^='rgb(139,92,246)'],
+.tremor-LineChart path[stroke^='rgb(139,92,246)'] {
+  fill: #a583fa !important;
+  stroke: #a583fa !important;
+}
+
+.tremor-BarChart rect[fill^='rgb(236,72,153)'] {
+  fill: #f472b6 !important;
+}
+
+.tremor-BarChart rect[fill^='rgb(139,92,246)'] {
+  fill: #a583fa !important;
+}
+
+.tremor-DonutChart path[fill^='rgb(16,185,129)'] {
+  fill: #34d399 !important;
+}
+
+.tremor-DonutChart path[fill^='rgb(245,158,11)'] {
+  fill: #fbbf24 !important;
+}
+
+.tremor-DonutChart path[fill^='rgb(244,63,94)'] {
+  fill: #fb717d !important;
+}
