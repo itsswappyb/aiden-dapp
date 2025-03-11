@@ -12,7 +12,11 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/" className="flex items-center space-x-5">
           <Image
-            src="https://raw.githubusercontent.com/itsswappyb/aiden-dapp/main/public/aiden-fox.png"
+            src={
+              process.env.NODE_ENV === 'production'
+                ? 'https://raw.githubusercontent.com/itsswappyb/aiden-dapp/main/public/aiden-fox.png'
+                : '/aiden-fox.png'
+            }
             alt="Aiden Fox Logo"
             width={30}
             height={30}

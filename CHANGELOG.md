@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.11.12] - 2024-03-11
+
+### Fixed
+
+- Improved image handling to work in both development and production environments
+- Added environment-specific image loading to prevent configuration issues
+- Enhanced logo display with conditional loading based on environment
+- Fixed local development image loading while maintaining production reliability
+
 ## [0.11.11] - 2024-03-11
 
 ### Fixed

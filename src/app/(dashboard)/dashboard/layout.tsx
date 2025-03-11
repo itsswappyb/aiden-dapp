@@ -81,7 +81,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center px-4 mb-8 relative">
             <Link href="/dashboard" className="flex items-center relative">
               <Image
-                src="https://raw.githubusercontent.com/itsswappyb/aiden-dapp/main/public/aiden-fox.png"
+                src={
+                  process.env.NODE_ENV === 'production'
+                    ? 'https://raw.githubusercontent.com/itsswappyb/aiden-dapp/main/public/aiden-fox.png'
+                    : '/aiden-fox.png'
+                }
                 alt="Aiden Fox Logo"
                 width={28}
                 height={28}
