@@ -26,6 +26,24 @@ import { usePrivy } from '@privy-io/react-auth';
 import { GET_CHARACTERS } from '@/graphql/queries/characters';
 import { INSERT_CHARACTER, START_AGENT, STOP_AGENT } from '@/graphql/mutations/characters';
 
+// Custom icons for platforms without built-in icons
+const TelegramIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm5.82 8.307l-1.97 9.274c-.146.658-.537.818-1.084.51l-3-2.21-1.446 1.394c-.16.16-.295.295-.607.295-.39 0-.326-.15-.46-.53l-1.033-3.394-3.014-1.008c-.65-.216-.66-.65.136-.968l11.74-4.522c.533-.198 1.05.126.737 1.16z" />
+  </svg>
+);
+
+const FarcasterIcon = ({ className }: { className?: string }) => (
+  <div className={`flex items-center justify-center border border-current rounded-sm ${className}`}>
+    <span className="text-xs font-semibold">F</span>
+  </div>
+);
+
 export default function AgentsPage() {
   const [userId] = useAtom(userIdAtom);
   const { showToast } = useToast();
@@ -133,20 +151,17 @@ export default function AgentsPage() {
   });
 
   const useCaseFilters = [
-    { id: 'all', name: 'All Use Cases', icon: CommandLineIcon },
-    { id: 'community', name: 'Community Management', icon: UserGroupIcon },
-    { id: 'engagement', name: 'Social Engagement', icon: ChatBubbleLeftRightIcon },
+    { id: 'all', name: 'All', icon: CommandLineIcon },
+    { id: 'community', name: 'Community', icon: UserGroupIcon },
+    { id: 'engagement', name: 'Engagement', icon: ChatBubbleLeftRightIcon },
   ];
 
-  // TODO: add missing icons
+  // Added missing icons
   const platformFilters = [
-    { id: 'all', name: 'All Platforms', icon: GlobeAltIcon },
-    // { id: 'discord', name: 'Discord', icon: DiscordLogoIcon },
+    { id: 'all', name: 'All', icon: GlobeAltIcon },
     { id: 'twitter', name: 'Twitter', icon: TwitterLogoIcon },
-    { id: 'telegram', name: 'Telegram', icon: null },
-    { id: 'farcaster', name: 'Farcaster', icon: null },
-    // { id: 'instagram', name: 'Instagram', icon: InstagramLogoIcon },
-    // { id: 'linkedin', name: 'LinkedIn', icon: LinkedInLogoIcon },
+    { id: 'telegram', name: 'Telegram', icon: TelegramIcon },
+    { id: 'farcaster', name: 'Farcaster', icon: FarcasterIcon },
   ];
 
   const deploymentTemplates = [
@@ -237,18 +252,18 @@ export default function AgentsPage() {
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6">
             <div className="flex-1">
               <label className="block text-sm font-medium text-white/70 mb-2">Use Case</label>
-              <div className="flex space-x-2 overflow-x-auto pb-2">
+              <div className="flex flex-wrap gap-2">
                 {useCaseFilters.map(filter => (
                   <button
                     key={filter.id}
                     onClick={() => setActiveFilter(filter.id)}
-                    className={`flex items-center px-4 py-2 rounded-lg border ${
+                    className={`flex items-center px-3 py-2 rounded-lg border text-sm whitespace-nowrap ${
                       activeFilter === filter.id
                         ? 'border-accent text-accent bg-accent/10'
                         : 'border-white/10 text-white/70 hover:border-white/20'
                     }`}
                   >
-                    <filter.icon className="w-5 h-5 mr-2" />
+                    <filter.icon className="w-4 h-4 mr-1.5" />
                     {filter.name}
                   </button>
                 ))}
@@ -256,18 +271,18 @@ export default function AgentsPage() {
             </div>
             <div className="flex-1">
               <label className="block text-sm font-medium text-white/70 mb-2">Platform</label>
-              <div className="flex space-x-2 overflow-x-auto pb-2">
+              <div className="flex flex-wrap gap-2">
                 {platformFilters.map(filter => (
                   <button
                     key={filter.id}
                     onClick={() => setActivePlatformFilter(filter.id)}
-                    className={`flex items-center px-4 py-2 rounded-lg border ${
+                    className={`flex items-center px-3 py-2 rounded-lg border text-sm whitespace-nowrap ${
                       activePlatformFilter === filter.id
                         ? 'border-accent text-accent bg-accent/10'
                         : 'border-white/10 text-white/70 hover:border-white/20'
                     }`}
                   >
-                    {filter?.icon && <filter.icon className="w-5 h-5 mr-2" />}
+                    {filter.icon && <filter.icon className="w-4 h-4 mr-1.5" />}
                     {filter.name}
                   </button>
                 ))}

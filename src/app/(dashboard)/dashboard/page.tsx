@@ -2,6 +2,7 @@
 
 import { Card, Title, Text, Tab, TabList, TabGroup, TabPanel, TabPanels } from '@tremor/react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import {
   ChatBubbleLeftRightIcon,
   CommandLineIcon,
@@ -60,6 +61,8 @@ const agents = [
 ];
 
 export default function Dashboard() {
+  const router = useRouter();
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -67,7 +70,7 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-gradient">Dashboard Overview</h1>
           <p className="text-white/70 mt-1">Monitor your AI agents and community engagement</p>
         </div>
-        <button className="button-primary">
+        <button className="button-primary" onClick={() => router.push('/dashboard/agents')}>
           <CommandLineIcon className="w-5 h-5 mr-2 inline-block" />
           Deploy New Agent
         </button>
