@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.11.10] - 2024-03-11
+
+### Added
+
+- Added Aiden fox logo to the navbar next to the brand text
+- Enhanced visual branding with consistent logo placement
+- Added Aiden fox logo to the dashboard sidebar
+- Improved sidebar branding and identity
+- Added clean highlight for active/selected navigation items in sidebar
+- Implemented smart path matching for navigation highlighting
+- Added custom icons for all platforms in Agent filters (Telegram, Farcaster)
+
+### Changed
+
+- Updated branding text with white-to-blue gradient styling
+- Optimized spacing between logo and "Aiden" text for better readability
+- Standardized brand text appearance across the application
+- Improved sidebar UX by keeping the fox logo in a fixed position when sidebar is collapsed
+- Fixed sidebar toggle button to maintain consistent positioning in both expanded and collapsed states
+- Enhanced sidebar animations with smooth text transitions
+- Refined navigation highlight with a cleaner, simpler style
+- Added proper ARIA labels to improve accessibility
+- Optimized layout for both expanded and collapsed sidebar states
+- Fixed jumpy text in navigation items when opening/closing the sidebar
+- Improved transition animations for smoother sidebar open/close experience
+- Improved Agent filter UI by making labels more concise to fit on a single row
+
+### Fixed
+
+- Fixed "Deploy New Agent" button on dashboard overview to navigate to the agents page
+
 ## [0.11.6] - 2024-02-14
 
 ### Added

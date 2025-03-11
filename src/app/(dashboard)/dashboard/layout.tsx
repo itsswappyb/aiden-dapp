@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   ChartBarIcon,
@@ -74,18 +75,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen overflow-hidden bg-gradient-to-b from-[#011829] via-[#030f1c] to-black">
       {/* Sidebar */}
       <div
-        className={`${isSidebarOpen ? 'w-64' : 'w-20'} flex-shrink-0 border-r border-white/5 transition-all duration-300 ease-in-out`}
+        className={`${isSidebarOpen ? 'w-64' : 'w-20'} flex-shrink-0 border-r border-white/5 transition-all duration-300 ease-in-out relative`}
       >
         <div className="h-full flex flex-col py-4">
-          <div className="flex items-center justify-between px-4 mb-8">
-            <Link href="/dashboard" className="flex items-center">
-              <span className={`text-xl font-bold text-white ${!isSidebarOpen && 'hidden'}`}>
+          <div className="flex items-center px-4 mb-8 relative">
+            <Link href="/dashboard" className="flex items-center relative">
+              <Image
+                src="/aiden-fox.png"
+                alt="Aiden Fox Logo"
+                width={28}
+                height={28}
+                className="w-7 h-7 flex-shrink-0 z-10"
+              />
+              <span
+                className={`ml-10 absolute whitespace-nowrap text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#87fafd] transition-all duration-300 ${
+                  isSidebarOpen
+                    ? 'opacity-100 translate-x-0'
+                    : 'opacity-0 -translate-x-4 pointer-events-none'
+                }`}
+              >
                 Aiden
               </span>
             </Link>
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-lg hover:bg-white/5"
+              className="p-2 rounded-lg hover:bg-white/5 absolute right-2 top-0"
+              aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
             >
               <svg
                 className="w-6 h-6 text-white"
@@ -105,15 +120,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <nav className="flex-1 space-y-1 px-2">
             {navigation.map(item => {
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === '/dashboard'
+                  ? pathname === '/dashboard'
+                  : pathname.startsWith(item.href);
+
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`${isActive ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'} flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out`}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200 ease-in-out ${
+                    isActive
+                      ? 'bg-gradient-to-r from-white/10 to-[#87fafd]/20 font-medium border-l-2 border-[#87fafd]'
+                      : 'border-l-2 border-transparent text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
                 >
-                  <item.icon className="mr-3 flex-shrink-0 h-6 w-6" />
-                  {isSidebarOpen && <span>{item.name}</span>}
+                  <item.icon
+                    className={`h-5 w-5 shrink-0 transition-colors ${
+                      isActive ? 'text-[#87fafd]' : 'text-gray-400 group-hover:text-white'
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <span
+                    className={`whitespace-nowrap overflow-hidden transition-all duration-200 ${
+                      isActive ? 'font-bold text-white' : ''
+                    } ${isSidebarOpen ? 'opacity-100 max-w-[200px]' : 'opacity-0 max-w-0'}`}
+                  >
+                    {item.name}
+                  </span>
                 </Link>
               );
             })}
