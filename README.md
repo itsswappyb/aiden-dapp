@@ -64,6 +64,15 @@ src/
 - AI Agent Management Dashboard
 - Multi-platform Integration (Telegram, Discord, X)
 - Community Analytics
+  - Member growth and retention metrics
+  - Platform-specific engagement tracking
+  - Sentiment analysis with visual indicators
+  - Hourly activity heatmap visualization
+  - Trending topics with sentiment breakdown
+  - Real-time activity feed
+  - Interactive time period filters
+  - Data export functionality in CSV format
+  - Custom-built charts optimized for dark mode
 - Agent Performance Monitoring
 - Custom Agent Training Interface
 - Notification System
@@ -100,7 +109,76 @@ Please read our contributing guidelines before submitting pull requests.
 
 ## Changelog
 
-### Version 0.11.4 (Latest)
+### Version 0.11.21 (Latest)
+
+- Enhanced Community Analytics Dashboard:
+  - Added data export functionality with CSV download options
+  - Improved key metrics cards with more prominent numerical values
+  - Standardized stat card layouts for consistent information presentation
+  - Improved overall information hierarchy to emphasize important metrics
+  - Optimized card structure for better readability and visual alignment
+  - Added context annotations for metrics comparison and historical data
+
+### Version 0.11.20
+
+- Improved Chart Visualization:
+  - Softened stroke lines on area charts for a more subtle visual effect
+  - Reduced opacity of chart borders for a more cohesive visual style
+  - Decreased size and brightness of data point indicators
+  - Made legend indicators match the softer color scheme
+  - Improved overall visual consistency between heatmap and area charts
+
+### Version 0.11.19
+
+- Enhanced Activity Visualization:
+  - Replaced bar chart in Hourly Activity section with a heatmap visualization
+  - Added day-of-week dimension to activity analysis for better pattern recognition
+  - Implemented color intensity scale to represent message volume more intuitively
+  - Enhanced data visualization with improved tooltips showing detailed activity metrics
+  - Added color scale legend for better interpretation of the heatmap
+
+### Version 0.11.18
+
+- Redesigned Chart Layouts:
+  - Completely redesigned chart layouts for a more professional appearance
+  - Improved grid line presentation with consistent sizing and spacing
+  - Repositioned chart legends to the bottom right with better visibility
+  - Added custom backgrounds to legends for improved readability
+  - Enhanced data point indicators for better visual tracking
+  - Updated gradient opacities for more balanced chart visuals
+  - Improved spacing and alignment of axis labels
+
+### Version 0.11.17
+
+- Fixed Layout Issues:
+  - Improved consistency of stat cards by enforcing uniform height
+  - Fixed chart legend overlap issues with better positioning
+  - Enhanced platform performance cards with improved background and hover effects
+  - Adjusted spacing and margins for more consistent layout
+  - Improved overall visual hierarchy and readability of dashboard elements
+
+### Version 0.11.16
+
+- Implemented Color System:
+  - Added a centralized CHART_COLORS object for unified color management
+  - Updated all charts to use the application's accent color theme (#87fafd)
+  - Improved chart visibility and readability on dark backgrounds
+  - Enhanced color contrast for all chart elements
+  - Applied consistent color semantics (positive/neutral/negative) across charts
+
+### Version 0.11.13-0.11.15
+
+- Completely Redesigned Community Analytics:
+  - Built modern dashboard with interactive time period filters
+  - Implemented tabbed chart sections for growth, retention, and new members
+  - Added detailed platform performance metrics with visual indicators
+  - Created hourly activity chart to track message volume patterns
+  - Added trending topics section with sentiment analysis
+  - Implemented real-time activity feed with platform-specific styling
+  - Enhanced statistics cards with additional metrics
+  - Fixed chart visibility issues on dark backgrounds
+
+### Version 0.11.4
 
 - Added Git Hooks and CI:
   - Implemented Husky for Git hooks
